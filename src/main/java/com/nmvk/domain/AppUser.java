@@ -5,7 +5,6 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Type;
 
@@ -33,7 +32,6 @@ public class AppUser implements Serializable {
 
 	@Column(name = "IS_ADMIN")
 	@Type(type = "true_false")
-	@NotNull
 	private boolean isAdmin;
 
 	public String getUserName() {

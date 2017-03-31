@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import com.nmvk.service.AdminService;
+import com.nmvk.service.StudentService;
 
 
 /**
@@ -21,6 +22,9 @@ public class Launcher implements CommandLineRunner{
 	@Autowired
 	AdminService adminService;
 	
+	@Autowired
+	StudentService studentService;
+	
 	public static void main(String[] args) {
 		System.out.println("Please wait.... this may take upto 30 seconds");
 		SpringApplication.run(Launcher.class, args);
@@ -29,5 +33,6 @@ public class Launcher implements CommandLineRunner{
 	@Override
 	public void run(String... arg0) throws Exception {
 		adminService.mainMenu();
+		//studentService.mainMenu();
 	}
 }

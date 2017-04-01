@@ -25,17 +25,32 @@ public class Student implements Serializable {
 	private int studentID;
 	
 	@Column(name = "EMAIL")
-	private boolean email;
+	private String email;
 	
 	@Column(name = "F_NAME")
-	private boolean firstName;
+	private String firstName;
 	
 	@Column(name = "L_NAME")
-	private boolean lastName;
+	private String lastName;
 	
 	@Column(name = "DEPARTMENT")
-	private boolean department;
+	private String department;
 	
+	@Column(name = "GPA")
+	private int gpa;	
+	
+	@Column(name = "BILL")
+	private int bill;
+	
+	@Column(name = "LVL")
+	private boolean level;
+	
+	@Column(name = "PHONE")
+	private long phone;
+	
+	@Column(name = "RESIDENCY")
+	private boolean residency;
+
 	public int getStudentID() {
 		return studentID;
 	}
@@ -44,91 +59,78 @@ public class Student implements Serializable {
 		this.studentID = studentID;
 	}
 
-	public boolean isEmail() {
+	public String getEmail() {
 		return email;
 	}
 
-	public void setEmail(boolean email) {
+	public void setEmail(String email) {
 		this.email = email;
 	}
 
-	public boolean isFirstName() {
+	public String getFirstName() {
 		return firstName;
 	}
 
-	public void setFirstName(boolean firstName) {
+	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
 
-	public boolean isLastName() {
+	public String getLastName() {
 		return lastName;
 	}
 
-	public void setLastName(boolean lastName) {
+	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
 
-	public boolean isDepartment() {
+	public String getDepartment() {
 		return department;
 	}
 
-	public void setDepartment(boolean department) {
+	public void setDepartment(String department) {
 		this.department = department;
 	}
 
-	public boolean isGpa() {
+	public int getGpa() {
 		return gpa;
 	}
 
-	public void setGpa(boolean gpa) {
+	public void setGpa(int gpa) {
 		this.gpa = gpa;
 	}
 
-	public boolean isBill() {
+	public int getBill() {
 		return bill;
 	}
 
-	public void setBill(boolean bill) {
+	public void setBill(int bill) {
 		this.bill = bill;
 	}
 
-	public int getLevel() {
+	public boolean isLevel() {
 		return level;
 	}
 
-	public void setLevel(int level) {
+	public void setLevel(boolean level) {
 		this.level = level;
 	}
 
-	public int getPhone() {
+	public long getPhone() {
 		return phone;
 	}
 
-	public void setPhone(int phone) {
+	public void setPhone(long phone) {
 		this.phone = phone;
 	}
 
-	public int getResidency() {
+	public boolean isResidency() {
 		return residency;
 	}
 
-	public void setResidency(int residency) {
+	public void setResidency(boolean residency) {
 		this.residency = residency;
 	}
-
-	@Column(name = "GPA")
-	private boolean gpa;	
 	
-	@Column(name = "BILL")
-	private boolean bill;
 	
-	@Column(name = "LVL")
-	private int level;
-	
-	@Column(name = "PHONE")
-	private int phone;
-	
-	@Column(name = "RESIDENCY")
-	private int residency;	
 	
 }

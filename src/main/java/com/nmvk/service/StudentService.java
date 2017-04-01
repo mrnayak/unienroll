@@ -2,8 +2,12 @@ package com.nmvk.service;
 
 import java.util.Scanner;
 
+import javax.persistence.Column;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.nmvk.domain.Student;
 
 @Service
 public class StudentService {
@@ -11,6 +15,8 @@ public class StudentService {
 	@Autowired
 	Scanner scanner;
 	
+	Student student = new Student();
+
 	/**
 	 * 1. View/Edit Profile
 	 * 2. View Courses/Enroll/Drop courses
@@ -21,6 +27,8 @@ public class StudentService {
 	 */
 	public void mainMenu() {
 		while (true) {
+			initializeSunil();//TODO: Delete after getting actual data from DB
+			System.out.println("\n**********Main menu**********");
 			System.out.println("1. View/Edit Profile ");
 			System.out.println("2. View Courses/Enroll/Drop courses");
 			System.out.println("3. View Pending courses (Pending, Rejected, Waitlisted) ");
@@ -57,31 +65,92 @@ public class StudentService {
 		}
 	}
 	
+	//TODO: Delete after getting actual data from DB
+	private void initializeSunil()
+	{
+		student.setStudentID(2001);
+		String email = "snarasi5@ncsu.edu";
+		student.setEmail(email);
+		student.setFirstName("Sunil");
+		student.setLastName("N");
+		student.setDepartment("CSC");
+		student.setGpa(3);
+		student.setBill(10000);
+		student.setLevel(true);
+		student.setPhone("919920020");
+		student.setResidency(false);
+	}
+	
 	/**
 	 * Press 0 to Go Back 1. First Name : ##### 2. Last Name : ##### 3. Email :
 	 * ##### 4. Phone : #####  5. Level 6. Status
 	 */
 	private void viewEditProfile() {
 		//TODO: get user's details and display after firstName lastName and other stuff 
+		System.out.println("\n**********View/Edit Profile**********");
 		System.out.println("Press 0 to Go Back");
-		System.out.println("1. First Name  : ");
-		System.out.println("2. Last Name   : ");
-		System.out.println("3. Email       : ");
-		System.out.println("4. Phone : ");
-		System.out.println("Level : ");
-		System.out.println("Status : ");
+		System.out.println("1. First Name  : "+ student.getFirstName());
+		System.out.println("2. Last Name   : "+ student.getLastName());
+		System.out.println("3. Email       : "+ student.getEmail());
+		System.out.println("4. Phone : " + student.getPhone());
+		if(student.isLevel()){
+			System.out.println("Level : Graduate");
+		}
+		else{
+			System.out.println("Level : UnderGraduate");
+		}
+		if(student.isResidency()){
+			System.out.println("Residency : In State");
+		}
+		else{
+			System.out.println("Residency : Out of State");
+		}
 		System.out.println("Please enter choice of number 1/2/3/4 to edit that particular item : ");
-
 		String value = scanner.next();
 
 		while (!value.equals("0")) {
-			System.out.println("Only '0' is valid input.");
-			System.out.println("Press 0 to Go Back");
-			value = scanner.next();
+			switch (value) {
+			case "1":
+				System.out.println("Existing First Name  : "+ student.getFirstName());
+				System.out.println("Enter New First Name : ");
+				value = scanner.next();
+				student.setFirstName(value);
+				//TODO: DB stuff to update the FirstName
+				break;
+			case "2":
+				System.out.println("Existing Last Name  : "+ student.getLastName());
+				System.out.println("Enter New Last Name : ");
+				value = scanner.next();
+				student.setLastName(value);
+				//TODO: DB stuff to update the LastName
+				break;
+			case "3":
+				System.out.println("Existing Email  : "+ student.getEmail());
+				System.out.println("Enter New Email (This is an unusual feature) : ");
+				value = scanner.next();
+				student.setEmail(value);
+				//TODO: DB stuff to update the Email
+				break;
+			case "4":
+				System.out.println("Existing Phone Number  : "+ student.getPhone());
+				System.out.println("Enter New Phone Number : ");
+				value = scanner.next();				
+				student.setPhone(value);
+				//TODO: DB stuff to update the Phone number
+				break;
+			default:
+				System.out.println("Invalid option entered");
+				System.out.println("Press \'0\' to Go Back OR Please enter choice of number 1/2/3/4 to edit that particular item : ");
+				value = scanner.next();
+				System.out.println(value.getClass().getSimpleName());
+				//continue;			
+			}
+			System.out.println("***********Values Updated***********");
+			break;
+			//viewEditProfile();			
 		}
-
 	}
-	
+
 	
 	/*View Available Courses
 	Enroll:
@@ -162,6 +231,6 @@ public class StudentService {
 		System.out.println("1. Display Student's balance  : ");
 		System.out.println("Pay Bills ");
 		System.out.println("2. Enter amount : ");
-	}		
+	}
 
 }

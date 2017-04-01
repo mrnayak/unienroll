@@ -46,7 +46,7 @@ public class Student implements Serializable {
 	private boolean level;
 	
 	@Column(name = "PHONE")
-	private long phone;
+	private String phone;
 	
 	@Column(name = "RESIDENCY")
 	private boolean residency;
@@ -115,11 +115,11 @@ public class Student implements Serializable {
 		this.level = level;
 	}
 
-	public long getPhone() {
+	public String getPhone() {
 		return phone;
 	}
 
-	public void setPhone(long phone) {
+	public void setPhone(String phone) {
 		this.phone = phone;
 	}
 

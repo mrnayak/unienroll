@@ -200,7 +200,7 @@ public class StudentService {
 	private void viewCourses(){
 		System.out.println("Open Semesters, choose: ");
 		List<Semester> openSem = semesterDao.getActiveSem();
-		System.out.println(openSem.toString());
+		
 		int counter = 1;
 		for (Semester sem : openSem) {
 
@@ -213,6 +213,7 @@ public class StudentService {
 		
 		System.out.println("Available courses: ");
 		List<CourseListing> courseList=courseListingDao.getOfferingsBySem(currentSem.getKey().getSem(),currentSem.getKey().getYear());
+		
 		counter = 1;
 		for (CourseListing courseEnt : courseList) {
 			String schedule=courseEnt.isMon()?"M":"";
@@ -222,17 +223,22 @@ public class StudentService {
 			schedule+=courseEnt.isFri()?"F":"";
 			schedule+=String.valueOf(" "+courseEnt.getStart_hour())+":"+String.valueOf(courseEnt.getStart_min())+"-"+String.valueOf(courseEnt.getEnd_hour())+":"+String.valueOf(courseEnt.getEnd_min());
 			
-			List<Faculty> facultyList=facultyDao.getFacultyListForCourse(courseEnt.getCid(), courseEnt.getSched_id(), courseEnt.getClassroom_id());
+			List<Faculty> facultyList=facultyDao.getFacultyListForCourse(courseEnt.getKey().getCid(), courseEnt.getKey().getSched_id(), courseEnt.getKey().getClassroom_id());
 			String facultytring="";
 			for(Faculty faculty:facultyList){
 				facultytring+=faculty.getName()+" ";
 			}
 			
-			System.out.println(String.valueOf(counter)+":"+courseEnt.getName()+" "+courseEnt.getDepartment()+" "+courseEnt.getRemaining()+" "+schedule +" ");
+			System.out.println(String.valueOf(counter)+":"+courseEnt.getName()+" "+courseEnt.getDepartment()+" "+courseEnt.getRemaining()+" "+schedule +" "+facultytring);
 			
 			
 			counter+=1;
 		}
+		
+		String addCourseValue = scanner.next();
+		CourseListing courseToRegister=courseList.get(Integer.valueOf(addCourseValue)-1);
+		
+		
 		
 		System.out.println("Press 0 to Go Back");
 		System.out.println("Enroll for a course : ");

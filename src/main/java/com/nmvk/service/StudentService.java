@@ -181,16 +181,17 @@ public class StudentService {
 	Press 0 To Go Back To Previous Menu
 	View My Courses
 	Show successfully added courses*/
+	
 	private void viewCourses(){
 		System.out.println("Open Semesters, choose: ");
 		List<Semester> openSem = semesterDao.getActiveSem();
 		int counter = 1;
 		for (Semester sem : openSem) {
-			System.out.println(String.valueOf(counter)+":"+sem.getSem()+" "+sem.getYear());
+			System.out.println(String.valueOf(counter)+":"+sem.getKey().getSem()+" "+sem.getKey().getYear());
 		}
 		String semResponse = scanner.next();
 		Semester currentSem = openSem.get(Integer.valueOf(semResponse)-1);
-		System.out.println(":"+currentSem.getSem()+" "+currentSem.getYear());
+		System.out.println(":"+currentSem.getKey().getSem()+" "+currentSem.getKey().getYear());
 		
 		System.out.println("Available courses: ");
 		// TODO: List all the available courses

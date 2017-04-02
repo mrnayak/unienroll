@@ -2,17 +2,19 @@ package com.nmvk.service;
 
 import java.util.Scanner;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
 import com.nmvk.dao.CourseDao;
-
+import com.nmvk.dao.SpecialPermDao;
 import com.nmvk.dao.StudentDao;
 import com.nmvk.domain.Course;
+import com.nmvk.domain.SpecialReq;
 import com.nmvk.domain.Student;
 
-
+import java.util.List;
 @Service
 public class AdminService {
 
@@ -21,9 +23,8 @@ public class AdminService {
 	
 	@Autowired
 	CourseDao courseDao;
-	
-
-
+	@Autowired
+	SpecialPermDao specialPermDao;
 	@Autowired
 	LoginService loginService;
 
@@ -145,10 +146,22 @@ public class AdminService {
 		}
 
 	}
+	
+	
+	
+	
+	private void specialReqs(){
+		
+		System.out.println("Here is a list of all pending Special Permissions:");
+		List<SpecialReq>  specialPerms = specialPermDao.getAllPendingSpecialReqs();
+		for(int i = 0;i<specialPerms.size();i++){
+			System.out.println("Choice:");
+		}
+		
+	}
 
 	private void enrollStudent() {
 		System.out.println("Enroll a new student");
-
 		System.out.println("1. Enter Student Id : ");
 		String studentId = scanner.next();
 

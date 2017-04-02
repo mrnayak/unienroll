@@ -24,7 +24,6 @@ public class Preconditionrequirement implements Serializable {
 	@Column(name = "CID")
 	private int courseID;
 	
-	@Id
 	@Column(name = "TAG")
 	private String tag;
 

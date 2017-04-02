@@ -6,6 +6,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import org.hibernate.annotations.Type;
+
 /**
  * Entity class representing Schedule table.
  * 
@@ -43,13 +45,17 @@ public class Student implements Serializable {
 	private int bill;
 	
 	@Column(name = "LVL")
+	@Type(type = "com.nmvk.type.BooleanType")
 	private boolean level;
 	
 	@Column(name = "PHONE")
 	private String phone;
 	
+	@Column(name = "DOB")
+	private String dateOfBirth;
+	
 	@Column(name = "RESIDENCY")
-	private boolean residency;
+	private Integer residency;
 
 	public int getStudentID() {
 		return studentID;
@@ -123,14 +129,5 @@ public class Student implements Serializable {
 		this.phone = phone;
 	}
 
-	public boolean isResidency() {
-		return residency;
-	}
-
-	public void setResidency(boolean residency) {
-		this.residency = residency;
-	}
-	
-	
 	
 }

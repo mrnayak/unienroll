@@ -15,11 +15,14 @@ import com.nmvk.dao.CourseDao;
 import com.nmvk.dao.FacultyDao;
 import com.nmvk.dao.OfferingDao;
 import com.nmvk.dao.ScheduleDao;
+import com.nmvk.dao.SemesterDao;
+import com.nmvk.dao.SpecialPermDao;
 import com.nmvk.dao.StudentDao;
 import com.nmvk.domain.Course;
 import com.nmvk.domain.Faculty;
+import com.nmvk.domain.Semester;
+import com.nmvk.domain.SpecialReq;
 import com.nmvk.domain.Student;
-
 @Service
 public class AdminService {
 
@@ -30,8 +33,13 @@ public class AdminService {
 	CourseDao courseDao;
 
 	@Autowired
+	SpecialPermDao specialPermDao;
+
+	@Autowired
 	LoginService loginService;
 
+	@Autowired
+	SemesterDao semesterDao;
 	@Autowired
 	StudentDao studentDao;
 
@@ -51,14 +59,14 @@ public class AdminService {
 	 */
 	public void mainMenu() {
 		while (true) {
-			System.out.println("1. View Profile ");
-			System.out.println("2. Enroll A New Student");
-			System.out.println("3. View Student’s Details ");
-			System.out.println("4. View/Add/Edit Courses ");
+			System.out.println("1. View Profile "); //done
+			System.out.println("2. Enroll A New Student"); 
+			System.out.println("3. View Student’s Details "); //done
+			System.out.println("4. View/Add/Edit Courses ");//done
 			System.out.println("5. View/Add Course Offering ");
-			System.out.println("6. View/Approve Special Enrollment Requests ");
+			System.out.println("6. View/Approve Special Enrollment Requests ");//almost
 			System.out.println("7. Enforce Add/Drop Deadline ");
-			System.out.println("8. Logout");
+			System.out.println("8. Logout");//done
 			System.out.println("Please enter choice : ");
 
 			String value = scanner.next();
@@ -79,6 +87,11 @@ public class AdminService {
 			case "4":
 				addCourse();
 				continue;
+			case "6":
+				specialReqs();
+				continue;
+			case "7":
+				setActiveSems();
 			case "8":
 				break;
 			default:
@@ -94,6 +107,33 @@ public class AdminService {
 	 * Press 0 to Go Back 1. First Name : ##### 2. Last Name : ##### 3. D.O.B :
 	 * ##### 4. Employee Id : #####
 	 */
+	
+	
+	private void setActiveSems()
+	{
+		while(true){
+		System.out.println("Enter 0 to keep unchecking semesters, else press 1");
+		Integer choice = Integer.parseInt(scanner.next());
+		if(choice==1){
+			return;
+		}
+		else if(choice==0){
+			System.out.println("Here is a list of all active semesters");
+			List<Semester> openSem = semesterDao.getActiveSem();
+			System.out.println(openSem.toString());
+			for(int i = 0; i<openSem.size();i++){
+				System.out.println(i+ "Semester: "+openSem.get(i).getKey().getSem()+" Year: "+openSem.get(i).getKey().getYear());
+			}
+			System.out.println("Enter the semester to close");
+			String sem = scanner.next();
+			System.out.println("Enter the Year of the Semester to Close");
+			String year = scanner.next();
+			semesterDao.closeSem(sem, year);
+			System.out.println(sem+", "+year+" has been closed.");
+			
+		}
+		}
+	}
 	private void addCourse() {
 		System.out.println("To view a course: 0, to Create anew one: 1, to Edit: 2");
 		Integer choice = Integer.parseInt(scanner.next());
@@ -155,10 +195,35 @@ public class AdminService {
 		}
 
 	}
+	
+	
+	
+	
+	private void specialReqs(){
+		
+		System.out.println("Here is a list of all pending Special Permissions:");
+		List<SpecialReq>  specialPerms = specialPermDao.getAllPendingSpecialReqs();
+		
+		
+		for(int i = 0;i<specialPerms.size();i++){
+			System.out.println("Choice:"+i+" Class ID: "+specialPerms.get(i).getcId()+" Classroom ID: "+specialPerms.get(i).getClassroomId()+" Student GPA: "+specialPerms.get(i).getGpa()+" Order of enollment: "+specialPerms.get(i).getOrderNumber()+" Schedule ID: "+specialPerms.get(i).getScheduleId()+" Student ID: "+specialPerms.get(i).getStudentId());
+		}
+		System.out.println("Enter the choice number to remove a Student, -1: to just exit");
+		Integer choice = Integer.parseInt(scanner.next());
+		SpecialReq rowToDelete = specialPerms.get(choice);
+		if(choice ==0){
+			specialPermDao.deleteSpecialPerm(rowToDelete.getStudentId(), rowToDelete.getScheduleId(), rowToDelete.getClassroomId() );
+			System.out.print("Student removed from list successfully");
+		}
+		else{
+			return;
+		}
+		
+		
+	}
 
 	private void enrollStudent() {
 		System.out.println("Enroll a new student");
-
 		System.out.println("1. Enter Student Id : ");
 		String studentId = scanner.next();
 

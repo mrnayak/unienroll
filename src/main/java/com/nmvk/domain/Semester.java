@@ -3,8 +3,9 @@ package com.nmvk.domain;
 import java.io.Serializable;
 
 import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 
 import org.hibernate.annotations.Type;
 
@@ -16,32 +17,12 @@ public class Semester implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@Id
-	@Column(name = "SEM")
-	private String sem;
-	
-	@Column(name = "YEAR")
-	private int year;
-	
+	@EmbeddedId
+	SemKey key;
+
 	@Column(name = "STATUS")
 	@Type(type = "com.nmvk.type.BooleanType")
 	private boolean status;
-	
-	public String getSem() {
-		return sem;
-	}
-
-	public void setSem(String sem) {
-		this.sem = sem;
-	}
-
-	public int getYear() {
-		return year;
-	}
-
-	public void setYear(int year) {
-		this.year = year;
-	}
 
 	public boolean getStatus() {
 		return status;
@@ -51,5 +32,12 @@ public class Semester implements Serializable {
 		this.status = status;
 	}
 
+	public SemKey getKey() {
+		return key;
+	}
+
+	public void setKey(SemKey key) {
+		this.key = key;
+	}
 
 }

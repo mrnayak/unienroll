@@ -8,8 +8,12 @@ import javax.persistence.Column;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.nmvk.dao.CourseListingDao;
+import com.nmvk.dao.FacultyDao;
 import com.nmvk.dao.SemesterDao;
 import com.nmvk.dao.StudentDao;
+import com.nmvk.domain.CourseListing;
+import com.nmvk.domain.Faculty;
 import com.nmvk.domain.Semester;
 import com.nmvk.domain.Student;
 
@@ -19,10 +23,16 @@ public class StudentService {
 	@Autowired
 	Scanner scanner;
 	
+	@Autowired
+	FacultyDao facultyDao;
+	
 	Student student = new Student();
 	
 	@Autowired
 	SemesterDao semesterDao;
+	
+	@Autowired
+	CourseListingDao courseListingDao;
 	
 	@Autowired
 	StudentDao studentDao;
@@ -181,19 +191,43 @@ public class StudentService {
 	Press 0 To Go Back To Previous Menu
 	View My Courses
 	Show successfully added courses*/
+	
 	private void viewCourses(){
 		System.out.println("Open Semesters, choose: ");
 		List<Semester> openSem = semesterDao.getActiveSem();
+		System.out.println(openSem.toString());
 		int counter = 1;
 		for (Semester sem : openSem) {
-			System.out.println(String.valueOf(counter)+":"+sem.getSem()+" "+sem.getYear());
+
+			System.out.println(String.valueOf(counter)+":"+sem.getKey().getSem()+" "+sem.getKey().getYear());
+			counter+=1;
 		}
 		String semResponse = scanner.next();
 		Semester currentSem = openSem.get(Integer.valueOf(semResponse)-1);
-		System.out.println(":"+currentSem.getSem()+" "+currentSem.getYear());
+		System.out.println(":"+currentSem.getKey().getSem()+" "+currentSem.getKey().getYear());
 		
 		System.out.println("Available courses: ");
-		// TODO: List all the available courses
+		List<CourseListing> courseList=courseListingDao.getOfferingsBySem(currentSem.getKey().getSem(),currentSem.getKey().getYear());
+		counter = 1;
+		for (CourseListing courseEnt : courseList) {
+			String schedule=courseEnt.isMon()?"M":"";
+			schedule+=courseEnt.isTue()?"T":"";
+			schedule+=courseEnt.isWed()?"W":"";
+			schedule+=courseEnt.isThu()?"Th":"";
+			schedule+=courseEnt.isFri()?"F":"";
+			schedule+=String.valueOf(" "+courseEnt.getStart_hour())+":"+String.valueOf(courseEnt.getStart_min())+"-"+String.valueOf(courseEnt.getEnd_hour())+":"+String.valueOf(courseEnt.getEnd_min());
+			
+			List<Faculty> facultyList=facultyDao.getFacultyListForCourse(courseEnt.getCid(), courseEnt.getSched_id(), courseEnt.getClassroom_id());
+			String facultytring="";
+			for(Faculty faculty:facultyList){
+				facultytring+=faculty.getName()+" ";
+			}
+			
+			System.out.println(String.valueOf(counter)+":"+courseEnt.getName()+" "+courseEnt.getDepartment()+" "+courseEnt.getRemaining()+" "+schedule +" ");
+			
+			
+			counter+=1;
+		}
 		
 		System.out.println("Press 0 to Go Back");
 		System.out.println("Enroll for a course : ");

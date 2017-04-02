@@ -5,11 +5,14 @@ import java.util.Scanner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.nmvk.dao.CourseDao;
+
 @Service
 public class AdminService {
 
 	@Autowired
 	Scanner scanner;
+	CourseDao CourseDao;
 	
 	/**
 	 * 1. View Profile 2. Enroll A New Student 3. View Student’s Details 4.
@@ -49,6 +52,23 @@ public class AdminService {
 	 * Press 0 to Go Back 1. First Name : ##### 2. Last Name : ##### 3. D.O.B :
 	 * ##### 4. Employee Id : #####
 	 */
+	private void addCourse() {
+		System.out.println("1. Course Name");
+		String cName = scanner.next();
+		System.out.println("2. Department: ");
+		String cDepartment = scanner.next();
+		System.out.println("3. Credits: ");
+		Integer Credits = Integer.parseInt(scanner.next());
+		System.out.println("4. Course Level: ");
+		String cLevel = scanner.next();
+		System.out.println("5. Course ID: ");
+		Integer cId = Integer.parseInt(scanner.next());
+		CourseDao.insert(cId, cName, cDepartment, Credits, cLevel);
+		
+
+	}
+	
+	
 	private void viewProfile() {
 		System.out.println("Press 0 to Go Back");
 		System.out.println("1. First Name  : ");
@@ -65,6 +85,5 @@ public class AdminService {
 		}
 
 	}
-	
 	
 }

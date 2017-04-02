@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Configuration;
 public class Config {
 	@Bean
 	public Scanner getScanner() {
-		return new Scanner(System.in);
+		Scanner scanner = new Scanner(System.in);
+		scanner.useDelimiter(System.getProperty("line.separator"));
+		return scanner;
 	}
 }

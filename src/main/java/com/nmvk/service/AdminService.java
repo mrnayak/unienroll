@@ -2,17 +2,19 @@ package com.nmvk.service;
 
 import java.util.Scanner;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
 import com.nmvk.dao.CourseDao;
-
+import com.nmvk.dao.SpecialPermDao;
 import com.nmvk.dao.StudentDao;
 import com.nmvk.domain.Course;
+import com.nmvk.domain.SpecialReq;
 import com.nmvk.domain.Student;
 
-
+import java.util.List;
 @Service
 public class AdminService {
 
@@ -21,9 +23,8 @@ public class AdminService {
 	
 	@Autowired
 	CourseDao courseDao;
-	
-
-
+	@Autowired
+	SpecialPermDao specialPermDao;
 	@Autowired
 	LoginService loginService;
 
@@ -40,7 +41,7 @@ public class AdminService {
 			System.out.println("1. View Profile ");
 			System.out.println("2. Enroll A New Student");
 			System.out.println("3. View Student’s Details ");
-			System.out.println("4. View/Add Courses ");
+			System.out.println("4. View/Add/Edit Courses ");
 			System.out.println("5. View/Add Course Offering ");
 			System.out.println("6. View/Approve Special Enrollment Requests ");
 			System.out.println("7. Enforce Add/Drop Deadline ");
@@ -62,6 +63,9 @@ public class AdminService {
 			case "4":
 				addCourse();
 				continue;
+			case "6":
+				specialReqs();
+				continue;
 			case "8":
 				break;
 			default:
@@ -78,7 +82,7 @@ public class AdminService {
 	 * ##### 4. Employee Id : #####
 	 */
 	private void addCourse() {
-		System.out.println("To view a course: 0, to Create anew one: 1");
+		System.out.println("To view a course: 0, to Create anew one: 1, to Edit: 2");
 		Integer choice = Integer.parseInt(scanner.next());
 		if(choice==0)
 		{
@@ -95,18 +99,34 @@ public class AdminService {
 
 		}
 		else if(choice==1){
-		System.out.println("1. Course Name");
-		String name = scanner.next();
-		System.out.println("2. Department: ");
-		String department = scanner.next();
-		System.out.println("3. Credits: ");
-		Integer credits = Integer.parseInt(scanner.next());
-		System.out.println("4. Course Level: ");
-		Integer courseLevel = Integer.parseInt(scanner.next());
-		System.out.println("5. Course ID: ");
-		Integer cId = Integer.parseInt(scanner.next());
-		//System.out.println(cId + cName+cDepartment+Credits+cLevel);
-		courseDao.insert(cId, name, department, credits, courseLevel);
+			System.out.println("1. Course ID: ");
+			Integer cId = Integer.parseInt(scanner.next());
+			System.out.println("2. Course Name");
+			String name = scanner.next();
+			System.out.println("3. Department: ");
+			String department = scanner.next();
+			System.out.println("4. Credits: ");
+			Integer credits = Integer.parseInt(scanner.next());
+			System.out.println("5. Course Level: ");
+			Integer courseLevel = Integer.parseInt(scanner.next());
+			courseDao.insert(cId, name, department, credits, courseLevel);
+		}
+		else if(choice==2)
+		{
+			System.out.println("1. Enter Course ID to edit: ");
+			Integer cId = scanner.nextInt();
+			System.out.println("2. Course Name");
+			String name = scanner.next();
+			System.out.println("4. Credits: ");
+			Integer credits = scanner.nextInt();
+			System.out.println("3. Department: ");
+			String department = scanner.next();
+			System.out.println("5. Course Level: ");
+			Integer courseLevel = Integer.parseInt(scanner.next());
+			
+			courseDao.updateCourse(cId, name, department, credits, courseLevel);
+
+			
 		}
 		
 
@@ -129,10 +149,35 @@ public class AdminService {
 		}
 
 	}
+	
+	
+	
+	
+	private void specialReqs(){
+		
+		System.out.println("Here is a list of all pending Special Permissions:");
+		List<SpecialReq>  specialPerms = specialPermDao.getAllPendingSpecialReqs();
+		
+		
+		for(int i = 0;i<specialPerms.size();i++){
+			System.out.println("Choice:"+i+" Class ID: "+specialPerms.get(i).getcId()+" Classroom ID: "+specialPerms.get(i).getClassroomId()+" Student GPA: "+specialPerms.get(i).getGpa()+" Order of enollment: "+specialPerms.get(i).getOrderNumber()+" Schedule ID: "+specialPerms.get(i).getScheduleId()+" Student ID: "+specialPerms.get(i).getStudentId());
+		}
+		System.out.println("Enter the choice number to remove a Student, -1: to just exit");
+		Integer choice = Integer.parseInt(scanner.next());
+		SpecialReq rowToDelete = specialPerms.get(choice);
+		if(choice ==0){
+			specialPermDao.deleteSpecialPerm(rowToDelete.getStudentId(), rowToDelete.getScheduleId(), rowToDelete.getClassroomId() );
+			System.out.print("Student removed from list successfully");
+		}
+		else{
+			return;
+		}
+		
+		
+	}
 
 	private void enrollStudent() {
 		System.out.println("Enroll a new student");
-
 		System.out.println("1. Enter Student Id : ");
 		String studentId = scanner.next();
 

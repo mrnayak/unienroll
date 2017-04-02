@@ -8,8 +8,10 @@ import javax.persistence.Column;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.nmvk.dao.CourseListingDao;
 import com.nmvk.dao.SemesterDao;
 import com.nmvk.dao.StudentDao;
+import com.nmvk.domain.CourseListing;
 import com.nmvk.domain.Semester;
 import com.nmvk.domain.Student;
 
@@ -23,6 +25,9 @@ public class StudentService {
 	
 	@Autowired
 	SemesterDao semesterDao;
+	
+	@Autowired
+	CourseListingDao courseListingDao;
 	
 	@Autowired
 	StudentDao studentDao;
@@ -194,7 +199,20 @@ public class StudentService {
 		System.out.println(":"+currentSem.getKey().getSem()+" "+currentSem.getKey().getYear());
 		
 		System.out.println("Available courses: ");
-		// TODO: List all the available courses
+		List<CourseListing> courseList=courseListingDao.getOfferingsBySem(currentSem.getSem(),currentSem.getYear());
+		counter = 1;
+		for (CourseListing courseEnt : courseList) {
+			String schedule=courseEnt.isMon()?"M":"";
+			schedule+=courseEnt.isTue()?"T":"";
+			schedule+=courseEnt.isWed()?"W":"";
+			schedule+=courseEnt.isThu()?"Th":"";
+			schedule+=courseEnt.isFri()?"F":"";
+			schedule+=String.valueOf(" "+courseEnt.getStart_hour())+":"+String.valueOf(courseEnt.getStart_min())+"-"+String.valueOf(courseEnt.getEnd_hour())+":"+String.valueOf(courseEnt.getEnd_min());
+			
+			System.out.println(String.valueOf(counter)+":"+courseEnt.getName()+" "+courseEnt.getDepartment()+" "+courseEnt.getRemaining()+" "+schedule);
+			
+			counter+=1;
+		}
 		
 		System.out.println("Press 0 to Go Back");
 		System.out.println("Enroll for a course : ");

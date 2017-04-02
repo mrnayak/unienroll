@@ -13,4 +13,5 @@ public interface CourseDao extends CrudRepository<Course, Long>{
 	@Modifying
 	@Query(value = "INSERT INTO COURSE(CID, NAME, DEPARTMENT, CREDIT, COURSE_LEVEL) VALUES (?1, ?2,?3, ?4, ?5)", nativeQuery = true)
 	void insert(Integer cId, String name, String department, Integer credit, Integer courseLevel);
+	
 }

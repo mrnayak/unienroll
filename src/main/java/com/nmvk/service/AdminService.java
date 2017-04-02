@@ -45,7 +45,7 @@ public class AdminService {
 			System.out.println("4. View/Add/Edit Courses ");//done
 			System.out.println("5. View/Add Course Offering ");
 			System.out.println("6. View/Approve Special Enrollment Requests ");//almost
-			System.out.println("7. Enforce Add/Drop Deadline ");
+			System.out.println("7. Enforce Add/Drop Deadline ");//done
 			System.out.println("8. Logout");//done
 			System.out.println("Please enter choice : ");
 

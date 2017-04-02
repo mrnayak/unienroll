@@ -44,8 +44,8 @@ public class StudentService {
 		while (true) {
 			student=studentDao.getStudentInfo();
 			System.out.println("\n**********Main menu**********");
-			System.out.println("1. View/Edit Profile ");
-			System.out.println("2. View Courses");
+			System.out.println("1. View/Edit Profile "); //done
+			System.out.println("2. View Offerings");
 			System.out.println("3. View Pending courses (Pending, Rejected, Waitlisted) ");
 			System.out.println("4. View Grades ");
 			System.out.println("5. View/Pay Bill ");

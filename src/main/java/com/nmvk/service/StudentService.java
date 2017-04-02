@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.nmvk.dao.CourseListingDao;
+import com.nmvk.dao.EnrollmentDao;
 import com.nmvk.dao.FacultyDao;
 import com.nmvk.dao.SemesterDao;
 import com.nmvk.dao.StudentDao;
@@ -24,6 +25,9 @@ public class StudentService {
 	Scanner scanner;
 	
 	@Autowired
+	EnrollmentDao enrollmentDao;
+	
+	@Autowired
 	FacultyDao facultyDao;
 	
 	Student student = new Student();
@@ -37,6 +41,8 @@ public class StudentService {
 	@Autowired
 	StudentDao studentDao;
 
+	@Autowired
+	
 	/**
 	 * 1. View/Edit Profile
 	 * 2. View Courses/Enroll/Drop courses
@@ -230,8 +236,12 @@ public class StudentService {
 			counter+=1;
 		}
 		
+		System.out.println("enter:");
 		String addCourseValue = scanner.next();
 		CourseListing courseToRegister=courseList.get(Integer.valueOf(addCourseValue)-1);
+		
+		enrollmentDao.addToEnrollment(1,courseToRegister.getKey().getSched_id(), courseToRegister.getKey().getClassroom_id(), courseToRegister.getKey().getCid(), 20, currentSem.getKey().getSem(), String.valueOf(currentSem.getKey().getYear()));
+		System.out.println("success");
 		
 		
 		

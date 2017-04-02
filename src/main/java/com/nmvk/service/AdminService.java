@@ -10,7 +10,7 @@ public class AdminService {
 
 	@Autowired
 	Scanner scanner;
-
+	
 	/**
 	 * 1. View Profile 2. Enroll A New Student 3. View Student’s Details 4.
 	 * View/Add Courses 5. View/Add Course Offering 6. View/Approve Special

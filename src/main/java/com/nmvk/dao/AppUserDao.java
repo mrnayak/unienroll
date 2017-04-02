@@ -1,7 +1,5 @@
 package com.nmvk.dao;
 
-import java.util.List;
-
 import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.Query;
@@ -19,6 +17,6 @@ import com.nmvk.domain.AppUser;
 @Repository
 public interface AppUserDao extends CrudRepository<AppUser, Long>{
 	
-	@Query(value = "SELECT * FROM AppUser", nativeQuery = true)
-	public List<AppUser> getAllUsers();
+	@Query(value = "SELECT * FROM AppUser WHERE USERNAME = ?1 AND PASSWORD = ?2", nativeQuery = true)
+	public AppUser getByUsernameAndPassWord(String userName, String password);
 }

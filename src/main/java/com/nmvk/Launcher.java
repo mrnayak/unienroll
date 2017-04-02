@@ -1,13 +1,14 @@
 package com.nmvk;
 
+import java.util.Scanner;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.nmvk.service.AdminService;
-import com.nmvk.service.StudentService;
+import com.nmvk.service.LoginService;
 
 
 /**
@@ -20,10 +21,10 @@ import com.nmvk.service.StudentService;
 public class Launcher implements CommandLineRunner{
 	
 	@Autowired
-	AdminService adminService;
+	LoginService loginService;
 	
 	@Autowired
-	StudentService studentService;
+	Scanner scanner;
 	
 	public static void main(String[] args) {
 		System.out.println("Please wait.... this may take upto 30 seconds");
@@ -32,7 +33,15 @@ public class Launcher implements CommandLineRunner{
 
 	@Override
 	public void run(String... arg0) throws Exception {
-		adminService.mainMenu();
-		//studentService.mainMenu();
+		System.out.println("Welcome to UniEnroll");
+		System.out.println("Please enter menu number to select");
+		System.out.println("1. Login");
+		System.out.println("2. Exit");
+		
+		String value = scanner.next();
+		
+		if(value.equals("1")) {
+			loginService.login();
+		}
 	}
 }

@@ -39,10 +39,10 @@ public class Student implements Serializable {
 	private String address;
 	
 	@Column(name = "GPA")
-	private float gpa;	
+	private Float gpa;	
 	
 	@Column(name = "BILL")
-	private int bill;
+	private Integer bill;
 	
 	@Column(name = "LVL")
 	@Type(type = "com.nmvk.type.BooleanType")
@@ -113,19 +113,19 @@ public class Student implements Serializable {
 		this.residency = residency;
 	}
 
-	public float getGpa() {
+	public Float getGpa() {
 		return gpa;
 	}
 
-	public void setGpa(float gpa) {
+	public void setGpa(Float gpa) {
 		this.gpa = gpa;
 	}
 
-	public int getBill() {
+	public Integer getBill() {
 		return bill;
 	}
 
-	public void setBill(int bill) {
+	public void setBill(Integer bill) {
 		this.bill = bill;
 	}
 

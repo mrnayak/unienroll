@@ -45,7 +45,7 @@ public class StudentService {
 
 			switch (value) {
 			case "1":
-				viewEditProfile();
+				viewEditProfile(true);
 				continue;
 			case "2":
 				viewCourses();
@@ -74,14 +74,70 @@ public class StudentService {
 	 * Press 0 to Go Back 1. First Name : ##### 2. Last Name : ##### 3. Email :
 	 * ##### 4. Phone : #####  5. Level 6. Status
 	 */
-	private void viewEditProfile() {
-		//TODO: get user's details and display after firstName lastName and other stuff 
+	private void viewEditProfile(boolean canEdit) {
 		System.out.println("\n**********View/Edit Profile**********");
 		System.out.println("Press 0 to Go Back");
+		displayProfile();
+		
+		if(canEdit){
+			System.out.println("Please enter choice of number 1/2/3/4 to edit that particular item : ");
+			String value = scanner.next();
+
+			while (!value.equals("0")) {
+				switch (value) {
+				case "1":
+					System.out.println("Existing First Name  : "+ student.getFirstName());
+					System.out.println("Enter New First Name : ");
+					value = scanner.next();
+					student.setFirstName(value);
+					updateStudent(student);
+					break;
+				case "2":
+					System.out.println("Existing Last Name  : "+ student.getLastName());
+					System.out.println("Enter New Last Name : ");
+					value = scanner.next();
+					student.setLastName(value);
+					updateStudent(student);
+					break;
+				case "3":
+					System.out.println("Existing DOB  : "+ student.getDateOfBirth());
+					System.out.println("Enter New DOB (MM-DD-YYYY)  : ");
+					value = scanner.next();
+					student.setDateOfBirth(value);
+					updateStudent(student);
+					break;
+				case "4":
+					System.out.println("Existing Phone Number  : "+ student.getPhone());
+					System.out.println("Enter New Phone Number : ");
+					value = scanner.next();				
+					student.setPhone(value);
+					updateStudent(student);
+					break;
+				default:
+					System.out.println("You entered value : "+ value + " which is");
+					System.out.println("Invalid option entered");
+					System.out.println("Press \'0\' to Go Back OR Please enter choice of number 1/2/3/4 to edit that particular item : ");
+					value = scanner.next();
+					//System.out.println(value.getClass().getSimpleName());
+					//continue;
+				}
+				System.out.println("***********Values Updated***********");
+				displayProfile();
+				break;
+							
+			}			
+		}			
+		
+	}
+
+
+	private void displayProfile() {
 		System.out.println("1. First Name  : "+ student.getFirstName());
 		System.out.println("2. Last Name   : "+ student.getLastName());
-		System.out.println("3. Email       : "+ student.getEmail());
+		System.out.println("3. Date of Birth       : "+ student.getDateOfBirth());
 		System.out.println("4. Phone : " + student.getPhone());
+		System.out.println("Email       : "+ student.getEmail());//TODO: Add method to handle updating email address 
+		System.out.println("Department : " + student.getAddress());
 		if(student.isLevel()){
 			System.out.println("Level : Graduate");
 		}
@@ -100,51 +156,6 @@ public class StudentService {
 				break;
 			default:
 				System.out.println("Residency: International");			
-		}
-		
-		System.out.println("Please enter choice of number 1/2/3/4 to edit that particular item : ");
-		String value = scanner.next();
-
-		while (!value.equals("0")) {
-			switch (value) {
-			case "1":
-				System.out.println("Existing First Name  : "+ student.getFirstName());
-				System.out.println("Enter New First Name : ");
-				value = scanner.next();
-				student.setFirstName(value);
-				//TODO: DB stuff to update the FirstName
-				break;
-			case "2":
-				System.out.println("Existing Last Name  : "+ student.getLastName());
-				System.out.println("Enter New Last Name : ");
-				value = scanner.next();
-				student.setLastName(value);
-				//TODO: DB stuff to update the LastName
-				break;
-			case "3":
-				System.out.println("Existing Email  : "+ student.getEmail());
-				System.out.println("Enter New Email (This is an unusual feature) : ");
-				value = scanner.next();
-				student.setEmail(value);
-				//TODO: DB stuff to update the Email
-				break;
-			case "4":
-				System.out.println("Existing Phone Number  : "+ student.getPhone());
-				System.out.println("Enter New Phone Number : ");
-				value = scanner.next();				
-				student.setPhone(value);
-				//TODO: DB stuff to update the Phone number
-				break;
-			default:
-				System.out.println("Invalid option entered");
-				System.out.println("Press \'0\' to Go Back OR Please enter choice of number 1/2/3/4 to edit that particular item : ");
-				value = scanner.next();
-				System.out.println(value.getClass().getSimpleName());
-				//continue;			
-			}
-			System.out.println("***********Values Updated***********");
-			break;
-			//viewEditProfile();			
 		}
 	}
 
@@ -229,5 +240,44 @@ public class StudentService {
 		System.out.println("Pay Bills ");
 		System.out.println("2. Enter amount : ");
 	}
-
+	
+	
+	
+	/* Note: DAO related helpers goes below here. 
+	 If we are adding new method which uses DAO we can refer if we already have that method below */
+	
+	private void updateStudent(Student student){
+		Integer level = student.isLevel() ? 1 : 0;
+		try{
+			studentDao.update(
+					new Integer(student.getStudentID()), 
+					student.getFirstName(), 
+					student.getLastName(),
+					student.getEmail(),
+					student.getPhone(),
+					student.getDateOfBirth(),
+					level,
+					new Integer(student.getResidency()), 
+					student.getBill());	
+		}
+		catch(Exception e){
+			System.out.println("***********SOME DB ERROR: FILED TO UPDATE STUDENT***********");
+			System.out.println(e);
+			System.out.println("***********SOME DB ERROR: FILED TO UPDATE STUDENT***********");
+		}
+		
+	}
+	
+// TODO: Should Update email in Student table and AppUser table	
+//	private void updateEmail(Student student){
+//		try{
+//			studentDao.updateEmail(new Integer(student.getStudentID()), student.getEmail());	
+//		}
+//		catch(Exception e){
+//			System.out.println("***********SOME DB ERROR: FILED TO UPDATE STUDENT***********");
+//			System.out.println(e);
+//			System.out.println("***********SOME DB ERROR: FILED TO UPDATE STUDENT***********");
+//		}
+//		
+//	}
 }

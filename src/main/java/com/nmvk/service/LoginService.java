@@ -30,7 +30,7 @@ public class LoginService {
 			System.out.println("1. Please enter Username");
 			String username = scanner.next();
 
-			System.out.println("1. Please enter Password");
+			System.out.println("2. Please enter Password");
 			String password = scanner.next();
 
 			AppUser appUser = appUserDao.getByUsernameAndPassWord(username, password);

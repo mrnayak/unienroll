@@ -35,9 +35,33 @@ public class Student implements Serializable {
 	@Column(name = "L_NAME")
 	private String lastName;
 	
-	@Column(name = "DEPARTMENT")
-	private String department;
+	@Column(name = "ADDRESS")
+	private String address;
 	
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getDateOfBirth() {
+		return dateOfBirth;
+	}
+
+	public void setDateOfBirth(String dateOfBirth) {
+		this.dateOfBirth = dateOfBirth;
+	}
+
+	public Integer getResidency() {
+		return residency;
+	}
+
+	public void setResidency(Integer residency) {
+		this.residency = residency;
+	}
+
 	@Column(name = "GPA")
 	private int gpa;	
 	
@@ -87,14 +111,6 @@ public class Student implements Serializable {
 
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
-	}
-
-	public String getDepartment() {
-		return department;
-	}
-
-	public void setDepartment(String department) {
-		this.department = department;
 	}
 
 	public int getGpa() {

@@ -40,7 +40,7 @@ public class AdminService {
 			System.out.println("1. View Profile ");
 			System.out.println("2. Enroll A New Student");
 			System.out.println("3. View Student’s Details ");
-			System.out.println("4. View/Add Courses ");
+			System.out.println("4. View/Add/Edit Courses ");
 			System.out.println("5. View/Add Course Offering ");
 			System.out.println("6. View/Approve Special Enrollment Requests ");
 			System.out.println("7. Enforce Add/Drop Deadline ");
@@ -78,7 +78,7 @@ public class AdminService {
 	 * ##### 4. Employee Id : #####
 	 */
 	private void addCourse() {
-		System.out.println("To view a course: 0, to Create anew one: 1");
+		System.out.println("To view a course: 0, to Create anew one: 1, to Edit: 2");
 		Integer choice = Integer.parseInt(scanner.next());
 		if(choice==0)
 		{
@@ -95,18 +95,34 @@ public class AdminService {
 
 		}
 		else if(choice==1){
-		System.out.println("1. Course Name");
-		String name = scanner.next();
-		System.out.println("2. Department: ");
-		String department = scanner.next();
-		System.out.println("3. Credits: ");
-		Integer credits = Integer.parseInt(scanner.next());
-		System.out.println("4. Course Level: ");
-		Integer courseLevel = Integer.parseInt(scanner.next());
-		System.out.println("5. Course ID: ");
-		Integer cId = Integer.parseInt(scanner.next());
-		//System.out.println(cId + cName+cDepartment+Credits+cLevel);
-		courseDao.insert(cId, name, department, credits, courseLevel);
+			System.out.println("1. Course ID: ");
+			Integer cId = Integer.parseInt(scanner.next());
+			System.out.println("2. Course Name");
+			String name = scanner.next();
+			System.out.println("3. Department: ");
+			String department = scanner.next();
+			System.out.println("4. Credits: ");
+			Integer credits = Integer.parseInt(scanner.next());
+			System.out.println("5. Course Level: ");
+			Integer courseLevel = Integer.parseInt(scanner.next());
+			courseDao.insert(cId, name, department, credits, courseLevel);
+		}
+		else if(choice==2)
+		{
+			System.out.println("1. Enter Course ID to edit: ");
+			Integer cId = scanner.nextInt();
+			System.out.println("2. Course Name");
+			String name = scanner.next();
+			System.out.println("4. Credits: ");
+			Integer credits = scanner.nextInt();
+			System.out.println("3. Department: ");
+			String department = scanner.next();
+			System.out.println("5. Course Level: ");
+			Integer courseLevel = Integer.parseInt(scanner.next());
+			
+			courseDao.updateCourse(cId, name, department, credits, courseLevel);
+
+			
 		}
 		
 

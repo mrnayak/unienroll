@@ -49,7 +49,6 @@ public class StudentService {
 	@Autowired
 	SemWiseGPADao semWiseGPADao;
 
-	@Autowired
 	
 	/**
 	 * 1. View/Edit Profile

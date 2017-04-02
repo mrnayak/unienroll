@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.nmvk.dao.CourseDao;
 
 import com.nmvk.dao.StudentDao;
+import com.nmvk.domain.Course;
 import com.nmvk.domain.Student;
 
 
@@ -77,6 +78,23 @@ public class AdminService {
 	 * ##### 4. Employee Id : #####
 	 */
 	private void addCourse() {
+		System.out.println("To view a course: 0, to Create anew one: 1");
+		Integer choice = Integer.parseInt(scanner.next());
+		if(choice==0)
+		{
+			System.out.println("Enter course number to search");
+			Integer cID = Integer.parseInt(scanner.next());
+			Course c = new Course();
+			c = courseDao.getById(cID);
+			System.out.println("The details are :-");
+			System.out.println("Course ID:"+ c.getcId());
+			System.out.println("Name: "+ c.getName());
+			System.out.println("Department: "+c.getDepartment());
+			System.out.println("Credit: "+c.getCredit());
+			System.out.println("Level"+c.getCourseLevel());
+
+		}
+		else if(choice==1){
 		System.out.println("1. Course Name");
 		String name = scanner.next();
 		System.out.println("2. Department: ");
@@ -89,6 +107,7 @@ public class AdminService {
 		Integer cId = Integer.parseInt(scanner.next());
 		//System.out.println(cId + cName+cDepartment+Credits+cLevel);
 		courseDao.insert(cId, name, department, credits, courseLevel);
+		}
 		
 
 	}

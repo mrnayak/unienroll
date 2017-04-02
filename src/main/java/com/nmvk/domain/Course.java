@@ -32,7 +32,7 @@ public class Course implements Serializable{
 	Integer credit;
 	
 	@Column(name = "course_level")
-	String courseLevel;
+	Integer courseLevel;
 
 	public Integer getcId() {
 		return cId;
@@ -66,11 +66,11 @@ public class Course implements Serializable{
 		this.credit = credit;
 	}
 
-	public String getCourseLevel() {
+	public Integer getCourseLevel() {
 		return courseLevel;
 	}
 
-	public void setCourseLevel(String courseLevel) {
+	public void setCourseLevel(Integer courseLevel) {
 		this.courseLevel = courseLevel;
 	}
 }

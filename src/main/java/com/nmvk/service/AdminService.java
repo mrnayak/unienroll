@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.nmvk.dao.StudentDao;
+import com.nmvk.domain.Student;
 
 @Service
 public class AdminService {
@@ -44,6 +45,9 @@ public class AdminService {
 				continue;
 			case "2" :
 				enrollStudent();
+				continue;
+			case "3" :
+				viewDetails();
 				continue;
 			case "8":
 				break;
@@ -142,6 +146,38 @@ public class AdminService {
 
 		studentDao.insert(Integer.parseInt(studentId), firstName, lastName, dob, Integer.parseInt(level),
 				Integer.parseInt(resident), Integer.parseInt(amount));
+	}
+	
+	
+	void viewDetails() {
+		System.out.println("Please Enter Student Id: ");
+		String id = scanner.next();
+		
+		while(!id.matches("[0-9]+")) {
+			System.out.println("Invalid Student Id");
+			System.out.println("Please enter student id");
+			id = scanner.next();
+		}
+		
+		Student student = studentDao.getById(Integer.parseInt(id));
+		
+		if(student == null) {
+			System.out.println("Student not found in database");
+			return;
+		}
+		
+		System.out.println("1. First Name :" + student.getFirstName());
+		System.out.println("2. Last Name :" + student.getLastName());
+		System.out.println("3. D.O.B(MM-DD-YYYY) :" + student.getDateOfBirth());
+		System.out.println("4. Student’s Level :" + student.isLevel());
+		System.out.println("5. Student’s Residency Status :" +student.getResidency());
+		System.out.println("6. Amount Owed(if any) :" + student.getBill());
+		System.out.println("7. GPA :" + student.getBill());
+		System.out.println("8. Phone :" + student.getPhone());
+		System.out.println("9. Email :" + student.getEmail());
+		System.out.println("10. Address :" + student.getAddress());
+		System.out.println("Press 0 To Go Back To Previous Menu");
+		String value = scanner.next();
 	}
 
 }

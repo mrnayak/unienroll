@@ -31,8 +31,8 @@ public class AppUser implements Serializable {
 	private String password;
 
 	@Column(name = "IS_ADMIN")
-	@Type(type = "true_false")
-	private boolean isAdmin;
+	@Type(type = "com.nmvk.type.BooleanType")
+	private Boolean isAdmin;
 
 	public String getUserName() {
 		return userName;

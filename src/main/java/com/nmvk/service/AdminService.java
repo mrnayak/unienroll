@@ -58,7 +58,7 @@ public class AdminService {
 
 		String value = scanner.next();
 
-		while (value.equals("0")) {
+		while (!value.equals("0")) {
 			System.out.println("Only '0' is valid input.");
 			System.out.println("Press 0 to Go Back");
 			value = scanner.next();

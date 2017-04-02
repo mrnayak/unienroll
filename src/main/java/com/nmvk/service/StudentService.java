@@ -9,9 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.nmvk.dao.CourseListingDao;
+import com.nmvk.dao.FacultyDao;
 import com.nmvk.dao.SemesterDao;
 import com.nmvk.dao.StudentDao;
 import com.nmvk.domain.CourseListing;
+import com.nmvk.domain.Faculty;
 import com.nmvk.domain.Semester;
 import com.nmvk.domain.Student;
 
@@ -20,6 +22,9 @@ public class StudentService {
 	
 	@Autowired
 	Scanner scanner;
+	
+	@Autowired
+	FacultyDao facultyDao;
 	
 	Student student = new Student();
 	
@@ -190,16 +195,19 @@ public class StudentService {
 	private void viewCourses(){
 		System.out.println("Open Semesters, choose: ");
 		List<Semester> openSem = semesterDao.getActiveSem();
+		System.out.println(openSem.toString());
 		int counter = 1;
 		for (Semester sem : openSem) {
+
 			System.out.println(String.valueOf(counter)+":"+sem.getKey().getSem()+" "+sem.getKey().getYear());
+			counter+=1;
 		}
 		String semResponse = scanner.next();
 		Semester currentSem = openSem.get(Integer.valueOf(semResponse)-1);
 		System.out.println(":"+currentSem.getKey().getSem()+" "+currentSem.getKey().getYear());
 		
 		System.out.println("Available courses: ");
-		List<CourseListing> courseList=courseListingDao.getOfferingsBySem(currentSem.getSem(),currentSem.getYear());
+		List<CourseListing> courseList=courseListingDao.getOfferingsBySem(currentSem.getKey().getSem(),currentSem.getKey().getYear());
 		counter = 1;
 		for (CourseListing courseEnt : courseList) {
 			String schedule=courseEnt.isMon()?"M":"";
@@ -209,7 +217,14 @@ public class StudentService {
 			schedule+=courseEnt.isFri()?"F":"";
 			schedule+=String.valueOf(" "+courseEnt.getStart_hour())+":"+String.valueOf(courseEnt.getStart_min())+"-"+String.valueOf(courseEnt.getEnd_hour())+":"+String.valueOf(courseEnt.getEnd_min());
 			
-			System.out.println(String.valueOf(counter)+":"+courseEnt.getName()+" "+courseEnt.getDepartment()+" "+courseEnt.getRemaining()+" "+schedule);
+			List<Faculty> facultyList=facultyDao.getFacultyListForCourse(courseEnt.getCid(), courseEnt.getSched_id(), courseEnt.getClassroom_id());
+			String facultytring="";
+			for(Faculty faculty:facultyList){
+				facultytring+=faculty.getName()+" ";
+			}
+			
+			System.out.println(String.valueOf(counter)+":"+courseEnt.getName()+" "+courseEnt.getDepartment()+" "+courseEnt.getRemaining()+" "+schedule +" ");
+			
 			
 			counter+=1;
 		}

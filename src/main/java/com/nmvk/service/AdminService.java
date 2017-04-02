@@ -424,7 +424,7 @@ public class AdminService {
 		System.out.println("8. Wait list Size : ");
 		String waitListSize = scanner.next();
 		
-		offeringDao.insert(parseInt(cid), sId, parseInt(classroomId), parseInt(classSize), parseInt(waitListSize), parseInt(classSize), semester, parseInt(year));
+		offeringDao.insert(parseInt(cid), sId, parseInt(classroomId), parseInt(classSize), parseInt(waitListSize), parseInt(classSize) + parseInt(waitListSize), semester, parseInt(year));
 	}
 	
 	static int parseInt(String s) {

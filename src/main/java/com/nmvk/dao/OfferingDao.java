@@ -12,7 +12,7 @@ public interface OfferingDao extends CrudRepository<Offering, Long> {
 	
 	@Transactional
 	@Modifying
-	@Query(value = "INSERT INTO OFFERING (CID, SCHED_ID, CLASSROOM_ID, MAX, WAITLIST, REMAINING, SEM, YEAR) "
+	@Query(value = "INSERT INTO OFFERINGS (CID, SCHED_ID, CLASSROOM_ID, MAX, WAITLIST, REMAINING, SEM, YEAR) "
 			+ " VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)", nativeQuery = true)
 	void insert(Integer cid, Integer sId, Integer classroomId, Integer max, Integer waitList, Integer remaining, String sem,
 			Integer year);

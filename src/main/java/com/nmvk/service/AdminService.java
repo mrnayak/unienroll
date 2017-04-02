@@ -63,6 +63,9 @@ public class AdminService {
 			case "4":
 				addCourse();
 				continue;
+			case "6":
+				specialReqs();
+				continue;
 			case "8":
 				break;
 			default:
@@ -154,9 +157,22 @@ public class AdminService {
 		
 		System.out.println("Here is a list of all pending Special Permissions:");
 		List<SpecialReq>  specialPerms = specialPermDao.getAllPendingSpecialReqs();
+		
+		
 		for(int i = 0;i<specialPerms.size();i++){
-			System.out.println("Choice:");
+			System.out.println("Choice:"+i+" Class ID: "+specialPerms.get(i).getcId()+" Classroom ID: "+specialPerms.get(i).getClassroomId()+" Student GPA: "+specialPerms.get(i).getGpa()+" Order of enollment: "+specialPerms.get(i).getOrderNumber()+" Schedule ID: "+specialPerms.get(i).getScheduleId()+" Student ID: "+specialPerms.get(i).getStudentId());
 		}
+		System.out.println("Enter the choice number to remove a Student, -1: to just exit");
+		Integer choice = Integer.parseInt(scanner.next());
+		SpecialReq rowToDelete = specialPerms.get(choice);
+		if(choice ==0){
+			specialPermDao.deleteSpecialPerm(rowToDelete.getStudentId(), rowToDelete.getScheduleId(), rowToDelete.getClassroomId() );
+			System.out.print("Student removed from list successfully");
+		}
+		else{
+			return;
+		}
+		
 		
 	}
 

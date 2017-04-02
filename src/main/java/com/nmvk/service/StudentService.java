@@ -10,10 +10,12 @@ import org.springframework.stereotype.Service;
 
 import com.nmvk.dao.CourseListingDao;
 import com.nmvk.dao.FacultyDao;
+import com.nmvk.dao.SemWiseGPADao;
 import com.nmvk.dao.SemesterDao;
 import com.nmvk.dao.StudentDao;
 import com.nmvk.domain.CourseListing;
 import com.nmvk.domain.Faculty;
+import com.nmvk.domain.SemWiseGPA;
 import com.nmvk.domain.Semester;
 import com.nmvk.domain.Student;
 
@@ -36,6 +38,9 @@ public class StudentService {
 	
 	@Autowired
 	StudentDao studentDao;
+	
+	@Autowired
+	SemWiseGPADao semWiseGPADao;
 
 	/**
 	 * 1. View/Edit Profile
@@ -280,6 +285,23 @@ public class StudentService {
 		System.out.println("Press 0 to Go Back");
 		System.out.println("1. Letter Grades  : ");
 		System.out.println("2. GPA : ");
+		System.out.println("Your Student id is");
+		Integer sid = 3;
+		Float GPA = studentDao.getOverallAvgGPA(sid);
+		System.out.println("Your overall GPA is: "+GPA);
+		System.out.println("Here is a break down of your GPA's");
+		List<SemWiseGPA> GPAs = semWiseGPADao.getSemWiseGPA(sid);
+		for(int i = 0; i<GPAs.size();i++){
+			System.out.println("GPA: "+GPAs.get(i).getGPA()+" Year: "+ GPAs.get(i).getYear());
+		}
+		
+		//USING OBJECTS TO STORE INDUVIDUAL COURSES AND THEIR GPAS
+		System.out.println("GPA's course wise:-");
+		List<Object[]> cGPAs = semWiseGPADao.getAllCourseGPAs(sid);
+		for(int i = 0;i<cGPAs.size();i++){
+			System.out.println("GPA: "+cGPAs.get(i)[0]+" Subject: "+cGPAs.get(i)[1]);
+		}
+		
 	}
 	
 	

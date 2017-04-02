@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.nmvk.dao.AdministratorDao;
 import com.nmvk.dao.CourseDao;
 import com.nmvk.dao.FacultyDao;
 import com.nmvk.dao.FacultyGroupDao;
@@ -19,6 +20,7 @@ import com.nmvk.dao.ScheduleDao;
 import com.nmvk.dao.SemesterDao;
 import com.nmvk.dao.SpecialPermDao;
 import com.nmvk.dao.StudentDao;
+import com.nmvk.domain.Administrator;
 import com.nmvk.domain.Course;
 import com.nmvk.domain.Faculty;
 import com.nmvk.domain.Semester;
@@ -56,6 +58,11 @@ public class AdminService {
 
 	@Autowired
 	FacultyGroupDao facultyGroupDao;
+	
+	Administrator administrator;
+	
+	@Autowired
+	AdministratorDao administratorDao;
 
 	/**
 	 * 1. View Profile 2. Enroll A New Student 3. View Student’s Details 4.
@@ -63,6 +70,8 @@ public class AdminService {
 	 * Enrollment Requests 7. Enforce Add/Drop Deadline 8. Logout
 	 */
 	public void mainMenu() {
+		administrator = administratorDao.getByEmail(loginService.appUser.getUserName());
+		
 		while (true) {
 			System.out.println("1. View Profile "); // done
 			System.out.println("2. Enroll A New Student");
@@ -185,10 +194,10 @@ public class AdminService {
 
 	private void viewProfile() {
 		System.out.println("Press 0 to Go Back");
-		System.out.println("1. First Name  : ");
-		System.out.println("2. Last Name   : ");
-		System.out.println("3. D.O.B       : ");
-		System.out.println("4. Employee Id : ");
+		System.out.println("1. First Name  : " + administrator.getFirstName());
+		System.out.println("2. Last Name   : " + administrator.getLastName());
+		System.out.println("3. D.O.B       : " + administrator.getDob());
+		System.out.println("4. Employee Id : " + administrator.getEmployee_id());
 
 		String value = scanner.next();
 

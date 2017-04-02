@@ -21,8 +21,8 @@ public interface StudentDao extends CrudRepository<Student, Long>{
 	@Query(value = "SELECT * FROM STUDENT WHERE STUDENT_ID = ?1", nativeQuery = true)
 	Student getById(int studentId);
 	
-	@Query(value = "SELECT * FROM STUDENT WHERE STUDENT_ID = 1", nativeQuery = true)
-	public Student getStudentInfo();
+	@Query(value = "SELECT * FROM STUDENT WHERE EMAIL = ?1", nativeQuery = true)
+	public Student getStudentInfo(String email);
 	
 	@Modifying
 	@Query(value = "UPDATE STUDENT SET F_NAME = ?2, L_NAME = ?3, EMAIL = ?4, PHONE = ?5, DOB = ?6, LVL = ?7, RESIDENCY = ?8, BILL = ?9 WHERE STUDENT_ID = ?1", nativeQuery = true)

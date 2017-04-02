@@ -38,6 +38,9 @@ public class StudentService {
 	SemesterDao semesterDao;
 	
 	@Autowired
+	LoginService loginService;
+	
+	@Autowired
 	CourseListingDao courseListingDao;
 	
 	@Autowired
@@ -58,7 +61,7 @@ public class StudentService {
 	 */
 	public void mainMenu() {
 		while (true) {
-			student=studentDao.getStudentInfo();
+			student=studentDao.getStudentInfo(loginService.appUser.getUserName());
 			System.out.println("\n**********Main menu**********");
 			System.out.println("1. View/Edit Profile "); //done
 			System.out.println("2. View Offerings");

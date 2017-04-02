@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.nmvk.dao.StudentDao;
 import com.nmvk.domain.Student;
 
 @Service
@@ -16,6 +17,9 @@ public class StudentService {
 	Scanner scanner;
 	
 	Student student = new Student();
+	
+	@Autowired
+	StudentDao studentDao;
 
 	/**
 	 * 1. View/Edit Profile
@@ -27,7 +31,7 @@ public class StudentService {
 	 */
 	public void mainMenu() {
 		while (true) {
-			initializeSunil();//TODO: Delete after getting actual data from DB
+			student=studentDao.getStudentInfo();
 			System.out.println("\n**********Main menu**********");
 			System.out.println("1. View/Edit Profile ");
 			System.out.println("2. View Courses/Enroll/Drop courses");
@@ -65,21 +69,6 @@ public class StudentService {
 		}
 	}
 	
-	//TODO: Delete after getting actual data from DB
-	private void initializeSunil()
-	{
-		student.setStudentID(2001);
-		String email = "snarasi5@ncsu.edu";
-		student.setEmail(email);
-		student.setFirstName("Sunil");
-		student.setLastName("N");
-		student.setDepartment("CSC");
-		student.setGpa(3);
-		student.setBill(10000);
-		student.setLevel(true);
-		student.setPhone("919920020");
-		student.setResidency(false);
-	}
 	
 	/**
 	 * Press 0 to Go Back 1. First Name : ##### 2. Last Name : ##### 3. Email :
@@ -99,12 +88,20 @@ public class StudentService {
 		else{
 			System.out.println("Level : UnderGraduate");
 		}
-		if(student.isResidency()){
-			System.out.println("Residency : In State");
+		switch(student.getResidency()){
+			case 1:
+				System.out.println("Residency: In State");
+				break;
+			case 2:
+				System.out.println("Residency: Out of State");
+				break;
+			case 3:
+				System.out.println("Residency: International");
+				break;
+			default:
+				System.out.println("Residency: International");			
 		}
-		else{
-			System.out.println("Residency : Out of State");
-		}
+		
 		System.out.println("Please enter choice of number 1/2/3/4 to edit that particular item : ");
 		String value = scanner.next();
 

@@ -17,4 +17,8 @@ public interface StudentDao extends CrudRepository<Student, Long>{
 	
 	@Query(value = "SELECT * FROM STUDENT WHERE STUDENT_ID = ?1", nativeQuery = true)
 	Student getById(int studentId);
+	
+	@Query(value = "SELECT * FROM STUDENT WHERE STUDENT_ID = 1", nativeQuery = true)
+	public Student getStudentInfo();
+	
 }

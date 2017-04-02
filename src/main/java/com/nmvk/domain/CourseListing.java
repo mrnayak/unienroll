@@ -3,6 +3,7 @@ package com.nmvk.domain;
 import java.io.Serializable;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
@@ -16,17 +17,19 @@ public class CourseListing implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	@Id
-	@Column(name = "CID")
-	Integer cid;
+	@EmbeddedId
+	MainKey key;
 	
-	@Column(name = "SCHED_ID")
-	Integer sched_id;
-	
-	
-	@Column(name = "CLASSROOM_ID")
-	Integer classroom_id;
-	
+	public MainKey getKey() {
+		return key;
+	}
+
+
+	public void setKey(MainKey key) {
+		this.key = key;
+	}
+
+
 	@Column(name = "NAME")
 	String name;
 	
@@ -83,35 +86,7 @@ public class CourseListing implements Serializable{
 	Integer end_min;
 
 
-	public Integer getCid() {
-		return cid;
-	}
-
-
-	public void setCid(Integer cid) {
-		this.cid = cid;
-	}
-
-
-	public Integer getSched_id() {
-		return sched_id;
-	}
-
-
-	public void setSched_id(Integer sched_id) {
-		this.sched_id = sched_id;
-	}
-
-
-	public Integer getClassroom_id() {
-		return classroom_id;
-	}
-
-
-	public void setClassroom_id(Integer classroom_id) {
-		this.classroom_id = classroom_id;
-	}
-
+	
 
 	public String getName() {
 		return name;

@@ -5,12 +5,20 @@ import java.util.Scanner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.nmvk.dao.StudentDao;
+
 @Service
 public class AdminService {
 
 	@Autowired
 	Scanner scanner;
-	
+
+	@Autowired
+	LoginService loginService;
+
+	@Autowired
+	StudentDao studentDao;
+
 	/**
 	 * 1. View Profile 2. Enroll A New Student 3. View Student’s Details 4.
 	 * View/Add Courses 5. View/Add Course Offering 6. View/Approve Special
@@ -34,13 +42,16 @@ public class AdminService {
 			case "1":
 				viewProfile();
 				continue;
+			case "2" :
+				enrollStudent();
+				continue;
 			case "8":
 				break;
 			default:
 				System.out.println("Invalid option selected");
 				continue;
 			}
-			
+
 			break;
 		}
 	}
@@ -65,6 +76,72 @@ public class AdminService {
 		}
 
 	}
-	
-	
+
+	private void enrollStudent() {
+		System.out.println("Enroll a new student");
+
+		System.out.println("1. Enter Student Id : ");
+		String studentId = scanner.next();
+
+		while (!studentId.matches("[0-9]+")) {
+			System.out.println("Invalid Student ID, ID should be numeric");
+			System.out.println("Please enter Student ID again");
+			studentId = scanner.next();
+		}
+
+		System.out.println("2. Enter Student’s First Name: ");
+		String firstName = scanner.next();
+
+		while (firstName.trim().length() == 0) {
+			System.out.println("Invalid First Name");
+			System.out.println("Please enter again");
+			firstName = scanner.next();
+		}
+
+		System.out.println("3. Enter Student’s Last Name:");
+		String lastName = scanner.next();
+
+		while (lastName.trim().length() == 0) {
+			System.out.println("Invalid Last Name");
+			System.out.println("Please enter again");
+			lastName = scanner.next();
+		}
+
+		System.out.println("4. Enter Student’s D.O.B(MM-DD-YYYY): ");
+		String dob = scanner.next();
+
+		System.out.println("5. Enter Student’s Level:");
+		System.out.println("Enter 0 for UG, 1 for PG");
+
+		String level = scanner.next();
+
+		while (!level.matches("[0-1]")) {
+			System.out.println("Invalid Level");
+			System.out.println("Please enter level again");
+			level = scanner.next();
+		}
+		System.out.println("6. Enter Student’s Residency Status: ");
+		System.out.println("Enter 0 for Resident, 1 for Non Resident, 2 for International");
+
+		String resident = scanner.next();
+
+		while (!resident.matches("[0-2]")) {
+			System.out.println("Invalid residency");
+			System.out.println("Please enter residency again");
+			resident = scanner.next();
+		}
+
+		System.out.println("7. Enter Amount Owed(if any):");
+		String amount = scanner.next();
+
+		while (!amount.matches("[0-9]+")) {
+			System.out.println("Invalid amount");
+			System.out.println("Please enter amount again");
+			amount = scanner.next();
+		}
+
+		studentDao.insert(Integer.parseInt(studentId), firstName, lastName, dob, Integer.parseInt(level),
+				Integer.parseInt(resident), Integer.parseInt(amount));
+	}
+
 }

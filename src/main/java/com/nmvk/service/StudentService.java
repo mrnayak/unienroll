@@ -1,5 +1,6 @@
 package com.nmvk.service;
 
+import java.util.List;
 import java.util.Scanner;
 
 import javax.persistence.Column;
@@ -7,7 +8,9 @@ import javax.persistence.Column;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.nmvk.dao.SemesterDao;
 import com.nmvk.dao.StudentDao;
+import com.nmvk.domain.Semester;
 import com.nmvk.domain.Student;
 
 @Service
@@ -17,6 +20,9 @@ public class StudentService {
 	Scanner scanner;
 	
 	Student student = new Student();
+	
+	@Autowired
+	SemesterDao semesterDao;
 	
 	@Autowired
 	StudentDao studentDao;
@@ -34,7 +40,7 @@ public class StudentService {
 			student=studentDao.getStudentInfo();
 			System.out.println("\n**********Main menu**********");
 			System.out.println("1. View/Edit Profile ");
-			System.out.println("2. View Courses/Enroll/Drop courses");
+			System.out.println("2. View Courses");
 			System.out.println("3. View Pending courses (Pending, Rejected, Waitlisted) ");
 			System.out.println("4. View Grades ");
 			System.out.println("5. View/Pay Bill ");
@@ -176,6 +182,15 @@ public class StudentService {
 	View My Courses
 	Show successfully added courses*/
 	private void viewCourses(){
+		System.out.println("Open Semesters, choose: ");
+		List<Semester> openSem = semesterDao.getActiveSem();
+		int counter = 1;
+		for (Semester sem : openSem) {
+			System.out.println(String.valueOf(counter)+":"+sem.getSem()+" "+sem.getYear());
+		}
+		String semResponse = scanner.next();
+		Semester currentSem = openSem.get(Integer.valueOf(semResponse)-1);
+		System.out.println(":"+currentSem.getSem()+" "+currentSem.getYear());
 		
 		System.out.println("Available courses: ");
 		// TODO: List all the available courses

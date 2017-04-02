@@ -88,29 +88,39 @@ public class StudentService {
 				case "1":
 					System.out.println("Existing First Name  : "+ student.getFirstName());
 					System.out.println("Enter New First Name : ");
-					value = scanner.next();
-					student.setFirstName(value);
+					String firstName = scanner.next();
+					while (firstName.trim().length() == 0) {
+						System.out.println("Invalid First Name");
+						System.out.println("Please enter again");
+						firstName = scanner.next();
+					}
+					student.setFirstName(firstName);
 					updateStudent(student);
 					break;
 				case "2":
 					System.out.println("Existing Last Name  : "+ student.getLastName());
 					System.out.println("Enter New Last Name : ");
-					value = scanner.next();
-					student.setLastName(value);
+					String lastName = scanner.next();
+					while (lastName.trim().length() == 0) {
+						System.out.println("Invalid Last Name");
+						System.out.println("Please enter again");
+						lastName = scanner.next();
+					}
+					student.setLastName(lastName);
 					updateStudent(student);
 					break;
 				case "3":
 					System.out.println("Existing DOB  : "+ student.getDateOfBirth());
 					System.out.println("Enter New DOB (MM-DD-YYYY)  : ");
-					value = scanner.next();
-					student.setDateOfBirth(value);
+					String dob = scanner.next();
+					student.setDateOfBirth(dob);
 					updateStudent(student);
 					break;
 				case "4":
 					System.out.println("Existing Phone Number  : "+ student.getPhone());
 					System.out.println("Enter New Phone Number : ");
-					value = scanner.next();				
-					student.setPhone(value);
+					String phone = scanner.next();				
+					student.setPhone(phone);
 					updateStudent(student);
 					break;
 				default:
@@ -125,9 +135,8 @@ public class StudentService {
 				displayProfile();
 				break;
 							
-			}			
-		}			
-		
+			}
+		}
 	}
 
 
@@ -233,12 +242,29 @@ public class StudentService {
 	 * Press 0 To Go Back To Previous Menu
 	 */
 	private void viewPayBill(){
-		//TODO: Get grades of the student and display below. Handle pay bill stuff
-		System.out.println("Press 0 to Go Back");
-		System.out.println("View Letter Bills ");
-		System.out.println("1. Display Student's balance  : ");
-		System.out.println("Pay Bills ");
-		System.out.println("2. Enter amount : ");
+		Integer outstandingBill = student.getBill();
+		System.out.println("Your balance  : " + outstandingBill);
+		if (outstandingBill != null && outstandingBill > 0){
+			System.out.println("Press 1 to Pay Bills or any key to go back : ");
+			String value = scanner.next();
+			while(value.equals("1")){
+				System.out.println("Enter amount  : ");
+				String amount = scanner.next();
+				while (!amount.matches("[0-9]+")) {
+					System.out.println("Invalid amount");
+					System.out.println("Please enter amount again");
+					amount = scanner.next();
+				}
+				Integer balance = outstandingBill - Integer.parseInt(amount);				
+				student.setBill(balance);
+				updateStudent(student);
+				System.out.println("*********Payment of $ " + amount +" successful***********");
+				System.out.println("Your balance  : " + balance);
+				System.out.println("Exiting to main menu");
+				value = "0";
+			}
+		}		
+		
 	}
 	
 	

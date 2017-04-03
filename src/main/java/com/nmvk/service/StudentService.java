@@ -3,19 +3,20 @@ package com.nmvk.service;
 import java.util.List;
 import java.util.Scanner;
 
-import javax.persistence.Column;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.nmvk.dao.CourseListingDao;
 import com.nmvk.dao.EnrollmentDao;
 import com.nmvk.dao.FacultyDao;
+import com.nmvk.dao.OfferingDao;
 import com.nmvk.dao.SemWiseGPADao;
 import com.nmvk.dao.SemesterDao;
 import com.nmvk.dao.StudentDao;
 import com.nmvk.domain.CourseListing;
+import com.nmvk.domain.Enrollments;
 import com.nmvk.domain.Faculty;
+import com.nmvk.domain.Offering;
 import com.nmvk.domain.SemWiseGPA;
 import com.nmvk.domain.Semester;
 import com.nmvk.domain.Student;
@@ -51,6 +52,9 @@ public class StudentService {
 	
 	@Autowired
 	SemWiseGPADao semWiseGPADao;
+	
+	@Autowired
+	OfferingDao offeringDao; 
 
 	
 	/**
@@ -210,7 +214,7 @@ public class StudentService {
 	Show successfully added courses*/
 	
 	private void viewCourses(){
-		System.out.println("Open Semesters, choose: ");
+		System.out.println("Open Semesters:");
 		List<Semester> openSem = semesterDao.getActiveSem();
 		
 		int counter = 1;
@@ -219,8 +223,18 @@ public class StudentService {
 			System.out.println(String.valueOf(counter)+":"+sem.getKey().getSem()+" "+sem.getKey().getYear());
 			counter+=1;
 		}
+		counter--;
+		System.out.println("\n\tTo see offerings from above semesters choose a number between 1 & "+ counter + ". If you don't want press 0 to continue");
+
 		String semResponse = scanner.next();
-		Semester currentSem = openSem.get(Integer.valueOf(semResponse)-1);
+		Integer semResponseInt = 1;
+		semResponseInt = validateIntScanWithLimit(semResponse, counter);
+//		if(intSemResponse == 0){
+//			return;
+//		}
+		
+		Semester currentSem = openSem.get(semResponseInt -1);
+		
 		System.out.println(":"+currentSem.getKey().getSem()+" "+currentSem.getKey().getYear());
 		
 		System.out.println("Available courses: ");
@@ -241,18 +255,35 @@ public class StudentService {
 				facultytring+=faculty.getName()+" ";
 			}
 			
-			System.out.println(String.valueOf(counter)+":"+courseEnt.getName()+" "+courseEnt.getDepartment()+" "+courseEnt.getRemaining()+" "+schedule +" "+facultytring);
-			
+			System.out.println(String.valueOf(counter)+":"+courseEnt.getName()+"\t\t"+courseEnt.getDepartment()+" "+courseEnt.getRemaining()+" "+schedule +" "+facultytring);
 			
 			counter+=1;
 		}
-		
-		System.out.println("enter:");
+		counter--;
+		System.out.println("\n\tTo enroll for a course listed above enter a number between 1 & "+ counter + ". If you don't want to enroll press 0 to go back or continue");
 		String addCourseValue = scanner.next();
-		CourseListing courseToRegister=courseList.get(Integer.valueOf(addCourseValue)-1);
+		Integer addCourseValueInt = 1;
+		addCourseValueInt = validateIntScanWithLimit(addCourseValue, counter);
 		
-		enrollmentDao.addToEnrollment(1,courseToRegister.getKey().getSched_id(), courseToRegister.getKey().getClassroom_id(), courseToRegister.getKey().getCid(), 20, currentSem.getKey().getSem(), String.valueOf(currentSem.getKey().getYear()));
-		System.out.println("success");
+		// if value is 0 skip below if condition
+		if(addCourseValueInt != 0){
+			CourseListing courseToRegister = courseList.get(addCourseValueInt - 1);
+			
+			// TODO: Add condition to check if all preconditions are met
+			boolean isEnrolled = checkIfEnrolled(student.getStudentID(), courseToRegister, currentSem); 
+			if(!isEnrolled){
+				if(enrollForCourse(student.getStudentID(), courseToRegister, currentSem)){
+					System.out.println("***********Enrollment successful***********");
+				}
+				else{
+					System.out.println("###########Enrollment not successful###########");
+				}
+			}
+			else{
+				//TODO: If not print saying student can't enroll since the precondition are not met or this clashes with his other courses
+				System.out.println("Already Enrolled");
+			}
+		}	
 	}
 	
 	
@@ -264,7 +295,7 @@ public class StudentService {
 		
 		//Student_id
 		int student_id=1;
-		System.out.println("Open Semesters, choose: ");
+		System.out.println("Open Semesters:");
 		List<Semester> openSem = semesterDao.getActiveSem();
 		
 		int counter = 1;
@@ -273,8 +304,18 @@ public class StudentService {
 			System.out.println(String.valueOf(counter)+":"+sem.getKey().getSem()+" "+sem.getKey().getYear());
 			counter+=1;
 		}
+		counter--;
+		
+		System.out.println("\n\tTo see registered courses from above semesters choose a number between 1 & "+ counter);
+
 		String semResponse = scanner.next();
-		Semester currentSem = openSem.get(Integer.valueOf(semResponse)-1);
+		Integer semResponseInt = 1;
+		semResponseInt = validateIntScanWithLimit(semResponse, counter);
+
+		Semester currentSem = openSem.get(semResponseInt -1);
+				
+		System.out.println("Registered courses: ");
+		
 		List<CourseListing> registeredCourses = courseListingDao.getRegisteredCourseBySem(currentSem.getKey().getSem(), currentSem.getKey().getYear());
 		counter = 1;
 		for (CourseListing courseEnt : registeredCourses) {
@@ -285,26 +326,48 @@ public class StudentService {
 			schedule+=courseEnt.isFri()?"F":"";
 			schedule+=String.valueOf(" "+courseEnt.getStart_hour())+":"+String.valueOf(courseEnt.getStart_min())+"-"+String.valueOf(courseEnt.getEnd_hour())+":"+String.valueOf(courseEnt.getEnd_min());
 		
-		
-		System.out.println(String.valueOf(counter)+":"+courseEnt.getName()+" "+courseEnt.getDepartment()+" "+courseEnt.getRemaining()+" "+schedule);
-		
-		
-		counter+=1;
+			System.out.println(String.valueOf(counter)+":"+courseEnt.getName()+"\t\t"+courseEnt.getDepartment()+" "+courseEnt.getRemaining()+" "+schedule);
+			counter+=1;
 		}
-		System.out.println("press 0 to go back");
-		String response = scanner.next();
-		while(Integer.valueOf(response)!=0){
-			System.out.println("invalid.press 0 to go back");
-			response = scanner.next();
+		counter--;
+		if(counter < 1){
+			return;
 		}
 		
+		System.out.println("\n\tTo Drop for a course listed above enter a number between 1 & "+ counter + ". If you don't want to drop press 0 to go back or continue");
+		String dropCourseValue = scanner.next();
+		Integer dropCourseValueInt = 1;
+		dropCourseValueInt = validateIntScanWithLimit(dropCourseValue, counter);
+		if(dropCourseValueInt == 0){
+			return;
+		}
+		CourseListing courseToDrop = registeredCourses.get(dropCourseValueInt-1);
+		
+		System.out.println("Do you want to drop the course for sure? yes/No");
+		String value = scanner.next();
+		boolean canDrop = false; // TODO: Make sure he is enrolled before dropping, or drop deadline is not over
+		if(value.equals("yes") || value.equals("Yes") || value.equals("YES") || value.equals("Y") || value.equals("y") ){
+			canDrop = true;
+		}
+		if(canDrop){
+			if(dropCourse(student.getStudentID(), courseToDrop, currentSem)){
+				System.out.println("*********** Drop successful ***********");
+			}
+			else{
+				System.out.println("########### Drop not successful ###########");
+			}
+		}
+		else{
+			//TODO: If not print saying student can't drop, reason can be the drop date deadline is over
+			System.out.println("Can't drop");
+		}
 	}
 	
-private void viewWaitlistedCourses(){
+	private void viewWaitlistedCourses(){
 		
 		//Student_id
 		int student_id=1;
-		System.out.println("Open Semesters, choose: ");
+		System.out.println("Open Semesters: ");
 		List<Semester> openSem = semesterDao.getActiveSem();
 		
 		int counter = 1;
@@ -312,10 +375,17 @@ private void viewWaitlistedCourses(){
 
 			System.out.println(String.valueOf(counter)+":"+sem.getKey().getSem()+" "+sem.getKey().getYear());
 			counter+=1;
-		}
+		}		
+		counter--;
+		
+		System.out.println("\n\tTo see your waitlisted courses from above semesters choose a number between 1 & "+ counter);
 		String semResponse = scanner.next();
 		
-		Semester currentSem = openSem.get(Integer.valueOf(semResponse)-1);
+		Integer semResponseInt = 1;
+		semResponseInt = validateIntScanWithLimit(semResponse, counter);
+		Semester currentSem = openSem.get(semResponseInt -1);				
+		System.out.println("Waitlisted courses: ");		
+		
 		List<CourseListing> wlCourses = courseListingDao.getWLourseBySem(currentSem.getKey().getSem(), currentSem.getKey().getYear());
 		counter = 1;
 		for (CourseListing courseEnt : wlCourses) {
@@ -327,16 +397,39 @@ private void viewWaitlistedCourses(){
 			schedule+=String.valueOf(" "+courseEnt.getStart_hour())+":"+String.valueOf(courseEnt.getStart_min())+"-"+String.valueOf(courseEnt.getEnd_hour())+":"+String.valueOf(courseEnt.getEnd_min());
 		
 		
-		System.out.println(String.valueOf(counter)+":"+courseEnt.getName()+" "+courseEnt.getDepartment()+" "+courseEnt.getRemaining()+" "+schedule);
-		
-		
-		counter+=1;
+			System.out.println(String.valueOf(counter)+":"+courseEnt.getName()+"\t\t"+courseEnt.getDepartment()+" "+courseEnt.getRemaining()+" "+schedule);
+			counter+=1;
 		}
-		System.out.println("press 0 to go back");
-		String response = scanner.next();
-		while(Integer.valueOf(response)!=0){
-			System.out.println("invalid.press 0 to go back");
-			response = scanner.next();
+		counter--;
+		if(counter < 1){
+			return;
+		}
+		System.out.println("\n\tTo Drop for a course listed above enter a number between 1 & "+ counter + ". If you don't want to drop press 0 to go back or continue");
+		String dropCourseValue = scanner.next();
+		Integer dropCourseValueInt = 1;
+		dropCourseValueInt = validateIntScanWithLimit(dropCourseValue, counter);
+		if(dropCourseValueInt == 0){
+			return;
+		}
+		CourseListing courseToDrop = wlCourses.get(dropCourseValueInt-1);
+		
+		System.out.println("Do you want to drop the course for sure? yes/No");
+		String value = scanner.next();
+		boolean canDrop = false; // TODO: Make sure he is enrolled before dropping, or drop deadline is not over
+		if(value.equals("yes") || value.equals("Yes") || value.equals("YES") || value.equals("Y") || value.equals("y") ){
+			canDrop = true;
+		}
+		if(canDrop){
+			if(dropCourse(student.getStudentID(), courseToDrop, currentSem)){
+				System.out.println("*********** Drop successful ***********");
+			}
+			else{
+				System.out.println("########### Drop not successful ###########");
+			}
+		}
+		else{
+			//TODO: If not print saying student can't drop, reason can be the drop date deadline is over
+			System.out.println("Can't drop");
 		}
 		
 	}
@@ -449,9 +542,13 @@ private void viewPendingCourses(){
 	}
 	
 	
-	
+	//********************************************************************************************************************************************
+	//********************************************************************************************************************************************
 	/* Note: DAO related helpers goes below here. 
 	 If we are adding new method which uses DAO we can refer if we already have that method below */
+	//********************************************************************************************************************************************
+	//********************************************************************************************************************************************
+
 	
 	private void updateStudent(Student student){
 		Integer level = student.isLevel() ? 1 : 0;
@@ -468,12 +565,223 @@ private void viewPendingCourses(){
 					student.getBill());	
 		}
 		catch(Exception e){
-			System.out.println("***********SOME DB ERROR: FILED TO UPDATE STUDENT***********");
+			System.out.println("***********SOME DB ERROR: FAILED TO UPDATE STUDENT***********");
 			System.out.println(e);
-			System.out.println("***********SOME DB ERROR: FILED TO UPDATE STUDENT***********");
+			System.out.println("***********SOME DB ERROR: FAILED TO UPDATE STUDENT***********");
 		}
 		
 	}
+	
+
+	private boolean enrollForCourse(int studentId, CourseListing courseToRegister, Semester currentSem){
+		try{
+			Integer courseId = courseToRegister.getKey().getCid();
+			Integer scheduleId = courseToRegister.getKey().getSched_id();
+			Integer classRoomId = courseToRegister.getKey().getClassroom_id(); 
+			//System.out.println("Offering offering = offeringDao.getByIds(courseId, scheduleId, classRoomId, currentSem.getKey().getSem(), currentSem.getKey().getYear());");
+			//System.out.println(courseId+ "," + scheduleId + "," + classRoomId + "," + currentSem.getKey().getSem() + "," + currentSem.getKey().getYear());
+			Offering offering = new Offering();
+			try{
+				offering = offeringDao.getByIds(courseId, scheduleId, classRoomId, currentSem.getKey().getSem(), currentSem.getKey().getYear());
+			}
+			catch(Exception e){
+				System.out.println("***********SOME DB ERROR: FAILED TO GET OFFERING***********");
+				System.out.println(e);
+				System.out.println("***********SOME DB ERROR: FAILED TO GET OFFERING***********");
+			}
+			if(offering != null && offering.getRemaining() > 0){
+				try{
+					//System.out.println("offeringDao.decrementRemaining(courseId, scheduleId, classRoomId, currentSem.getKey().getSem(), currentSem.getKey().getYear());");
+					offeringDao.decrementRemaining(courseId, scheduleId, classRoomId, currentSem.getKey().getSem(), currentSem.getKey().getYear());
+				}
+				catch(Exception e){
+					System.out.println("***********SOME DB ERROR: FAILED TO ENROLL DECREASE REMAINING***********");
+					System.out.println(e);
+					System.out.println("***********SOME DB ERROR: FAILED TO ENROLL DECREASE REMAINING***********");
+				}
+				Integer orderNumber = offering.getMax() + offering.getWaitList() - offering.getRemaining() + 1;
+				//System.out.println("Order Number : " + orderNumber);
+				if(orderNumber > offering.getMax()){
+					Integer waitlistOrder = orderNumber - offering.getMax();
+					System.out.println("&&&&&&&&&&& You are being enrolled to waitlist position " + waitlistOrder +" out of "+ offering.getWaitList() +"&&&&&&&&&&&\n");
+				}
+				else{
+					System.out.println("*********** Enrollment in progress ***********\n");
+				}
+				
+				enrollmentDao.addToEnrollment(studentId, 
+						courseToRegister.getKey().getSched_id(), 
+						courseToRegister.getKey().getClassroom_id(), 
+						courseToRegister.getKey().getCid(), 
+						orderNumber,
+						currentSem.getKey().getSem(),
+						String.valueOf(currentSem.getKey().getYear()));
+				if(updateBillForCourseEnroll(studentId)){
+					System.out.println("$$$$$$$$$ Student successfully billed $$$$$$$$$\n");
+				}
+			}
+			else{
+				System.out.println("########### All seats are filled, can't enroll further ###########\n\n");
+				return false;
+			}			
+		}
+		//Catch IntegretyConstraintException and handle some how
+		catch(Exception e){
+			System.out.println("***********SOME DB ERROR: FAILED TO ENROLL A STUDENT***********");
+			System.out.println(e);
+			System.out.println("***********SOME DB ERROR: FAILED TO ENROLL A STUDENT***********");
+		}
+		return true;
+	}
+	
+	private boolean checkIfEnrolled(int studentId, CourseListing courseToRegister, Semester currentSem){
+		Enrollments enrollment = enrollmentDao.getByIds(studentId, 
+				courseToRegister.getKey().getSched_id(), 
+				courseToRegister.getKey().getClassroom_id(), 
+				courseToRegister.getKey().getCid(),
+				currentSem.getKey().getSem(),
+				String.valueOf(currentSem.getKey().getYear()));
+		if(enrollment == null){
+			System.out.println("enrollment == null True, so returning false");
+			return false;
+		}
+		return true;		
+	}
+	
+	private boolean dropCourse(int studentId, CourseListing courseToDrop, Semester currentSem){
+		try{
+			Integer courseId = courseToDrop.getKey().getCid();
+			Integer scheduleId = courseToDrop.getKey().getSched_id();
+			Integer classRoomId = courseToDrop.getKey().getClassroom_id(); 
+			
+			try{
+				offeringDao.incrementRemaining(courseId, scheduleId, classRoomId, currentSem.getKey().getSem(), currentSem.getKey().getYear());
+			}
+			catch(Exception e){
+				System.out.println("***********SOME DB ERROR: FAILED TO DROP COURSE, INCREASE REMAINING***********");
+				System.out.println(e);
+				System.out.println("***********SOME DB ERROR: FAILED TO DROP COURSE, INCREASE REMAINING***********");
+				return false;
+			}
+			
+			Integer orderNumber = enrollmentDao.getOrderNumber(studentId, 
+					courseToDrop.getKey().getSched_id(), 
+					courseToDrop.getKey().getClassroom_id(), 
+					courseToDrop.getKey().getCid(), 
+					currentSem.getKey().getSem(), 
+					String.valueOf(currentSem.getKey().getYear()));
+			//System.out.println("orderNumber of the student : " + orderNumber);
+						
+			enrollmentDao.dropEnrollment(studentId, 
+					courseToDrop.getKey().getSched_id(), 
+					courseToDrop.getKey().getClassroom_id(), 
+					courseToDrop.getKey().getCid(), 
+					currentSem.getKey().getSem(), 
+					String.valueOf(currentSem.getKey().getYear()));
+			
+			try{
+				enrollmentDao.decrementOrder(orderNumber,						 
+						courseToDrop.getKey().getSched_id(), 
+						courseToDrop.getKey().getClassroom_id(), 
+						courseToDrop.getKey().getCid(), 
+						currentSem.getKey().getSem(), 
+						String.valueOf(currentSem.getKey().getYear()));
+			}
+			catch(Exception e){
+				System.out.println("***********SOME DB ERROR: FAILED TO DECREMENT ORDER FOR ENROLLED LIST AFTER A DROP***********");
+				System.out.println(e);
+				System.out.println("***********SOME DB ERROR: FAILED TO DECREMENT ORDER FOR ENROLLED LIST AFTER A DROP***********");
+			}
+							
+			if(updateBillForCourseDrop(studentId)){
+				System.out.println("$$$$$$$$$ Student successfully unbilled $$$$$$$$$\n");
+			}
+		
+		}
+		catch(Exception e){
+			System.out.println("***********SOME DB ERROR: FAILED TO ENROLL A STUDENT***********");
+			System.out.println(e);
+			System.out.println("***********SOME DB ERROR: FAILED TO ENROLL A STUDENT***********");
+			return false;
+		}		
+		return true;		
+	}
+	
+	/*  Billing for Resident = $1000
+	 *  Billing for Non-Resident + $1000
+	 *  Billing for International + $1000
+	 *  Billing for Under Graduate + $1000
+	 *  Billing for Graduate + $1000
+	 *  Change the settings below as per original prices
+	*/
+	private Integer getBillPerCourseForStudent(Student billedStudent){
+		// Note: base amount for Resident & Undergraduate
+		Integer amount = 2000;
+		if(billedStudent.isLevel()){
+			amount += 1000;
+		}
+		switch(billedStudent.getResidency()){
+			case 1:
+				// No change in bill
+				break;
+			case 2:
+				amount += 1000;
+				break;
+			case 3:
+				amount += 2000;
+				break;
+			default:
+				amount += 2000;			
+		}		
+		return amount;		
+	}
+	
+	private boolean updateBillForCourseEnroll(int studentId){
+		Student billedStudent = student;
+		if(studentId != student.getStudentID()){
+			billedStudent = studentDao.getById(studentId);
+		}
+		billedStudent.setBill(billedStudent.getBill() + getBillPerCourseForStudent(billedStudent));
+		updateStudent(billedStudent);
+		return true;
+	}
+	
+	private boolean updateBillForCourseDrop(int studentId){
+		Student billedStudent = student;
+		if(studentId != student.getStudentID()){
+			billedStudent = studentDao.getById(studentId);
+		}				
+		billedStudent.setBill(billedStudent.getBill() - getBillPerCourseForStudent(billedStudent));				
+		updateStudent(billedStudent);
+		return true;
+	}
+	
+	private Integer validateIntScanWithLimit(String scanString, int limit) {
+		Integer scanInt = 1;
+		while(!scanString.equals("0")){
+			try{
+				scanInt = Integer.parseInt(scanString);
+				if(scanInt <= limit && scanInt > 0){
+					break;
+				}
+				else{
+					System.out.println("Invalid option entered, please enter again or Enter 0 to continue");
+					scanString = scanner.next();
+					continue;
+				}
+			}
+			catch(NumberFormatException e){
+				System.out.println("Invalid option entered, please enter again or Enter 0 to continue");
+				scanString = scanner.next();
+				continue;
+			}
+		}
+		if(scanString.equals("0")){
+			scanInt = 0;
+		}
+		return scanInt;
+	}
+
 	
 // TODO: Should Update email in Student table and AppUser table	
 //	private void updateEmail(Student student){
@@ -481,9 +789,9 @@ private void viewPendingCourses(){
 //			studentDao.updateEmail(new Integer(student.getStudentID()), student.getEmail());	
 //		}
 //		catch(Exception e){
-//			System.out.println("***********SOME DB ERROR: FILED TO UPDATE STUDENT***********");
+//			System.out.println("***********SOME DB ERROR: FAILED TO UPDATE STUDENT***********");
 //			System.out.println(e);
-//			System.out.println("***********SOME DB ERROR: FILED TO UPDATE STUDENT***********");
+//			System.out.println("***********SOME DB ERROR: FAILED TO UPDATE STUDENT***********");
 //		}
 //		
 //	}

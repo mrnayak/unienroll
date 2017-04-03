@@ -74,8 +74,8 @@ public class StudentService {
 			System.out.println("3. View Registered courses");
 			System.out.println("4. View Waitlisted courses ");
 			System.out.println("5. View Pending courses ");
-			System.out.println("5. View/Pay Bill ");
-			System.out.println("6. Logout");
+			System.out.println("6. View/Pay Bill ");
+			System.out.println("7. Logout");
 			System.out.println("Please enter choice : ");
 
 			String value = scanner.next();
@@ -97,6 +97,9 @@ public class StudentService {
 				viewPendingCourses();
 				continue;
 			case "6":
+				viewPayBill();
+				break;
+			case "7":
 				break;
 			default:
 				System.out.println("Invalid option selected");
@@ -616,9 +619,9 @@ private void viewPendingCourses(){
 						orderNumber,
 						currentSem.getKey().getSem(),
 						String.valueOf(currentSem.getKey().getYear()));
-				if(updateBillForCourseEnroll(studentId)){
-					System.out.println("$$$$$$$$$ Student successfully billed $$$$$$$$$\n");
-				}
+//				if(updateBillForCourseEnroll(studentId)){
+//					System.out.println("$$$$$$$$$ Student successfully billed $$$$$$$$$\n");
+//				}
 			}
 			else{
 				System.out.println("########### All seats are filled, can't enroll further ###########\n\n");
@@ -693,9 +696,9 @@ private void viewPendingCourses(){
 				System.out.println("***********SOME DB ERROR: FAILED TO DECREMENT ORDER FOR ENROLLED LIST AFTER A DROP***********");
 			}
 							
-			if(updateBillForCourseDrop(studentId)){
-				System.out.println("$$$$$$$$$ Student successfully unbilled $$$$$$$$$\n");
-			}
+//			if(updateBillForCourseDrop(studentId)){
+//				System.out.println("$$$$$$$$$ Student successfully unbilled $$$$$$$$$\n");
+//			}
 		
 		}
 		catch(Exception e){

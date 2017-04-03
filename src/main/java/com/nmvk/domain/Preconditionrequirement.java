@@ -3,6 +3,7 @@ package com.nmvk.domain;
 import java.io.Serializable;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
@@ -20,29 +21,33 @@ public class Preconditionrequirement implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	@Id
-	@Column(name = "CID")
-	private int courseID;
+	@EmbeddedId
+	PreConKey key;
+
+	@Column(name = "GPA")
+	float gpa;
 	
-	@Column(name = "TAG")
-	private String tag;
-
-	public int getCourseID() {
-		return courseID;
+	public float getGpa() {
+		return gpa;
 	}
 
-	public void setCourseID(int courseID) {
-		this.courseID = courseID;
+	public void setGpa(float gpa) {
+		this.gpa = gpa;
 	}
 
-	public String getTag() {
-		return tag;
+	public PreConKey getKey() {
+		return key;
 	}
 
-	public void setTag(String tag) {
-		this.tag = tag;
-	}	
-	
+	public void setKey(PreConKey key) {
+		this.key = key;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+		
 }
 
 

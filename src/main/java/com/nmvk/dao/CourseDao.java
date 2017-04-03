@@ -1,5 +1,7 @@
 package com.nmvk.dao;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.Modifying;
@@ -22,5 +24,8 @@ public interface CourseDao extends CrudRepository<Course, Long>{
 	
 	@Query(value = "SELECT * FROM COURSE WHERE cID = ?1", nativeQuery = true)
 	public Course getById(int CId);
+	
+
+	
 
 }

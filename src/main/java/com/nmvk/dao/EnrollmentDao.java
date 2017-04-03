@@ -37,4 +37,6 @@ public interface EnrollmentDao extends CrudRepository<Enrollments, Long>{
 	@Query(value = "DELETE FROM ENROLLMENTS WHERE STUDENT_ID = ?1 AND SCHED_ID = ?2 AND CLASSROOM_ID = ?3 AND CID = ?4 AND SEM = ?5 AND YEAR = ?6 ", nativeQuery = true)
 	public void dropEnrollment(Integer studentId, Integer scheduleId, Integer classroomId, Integer courseId, String sem, String year);
 	
+	@Query(value = "select  * from ENROLLMENTS e where e.gpa is not null and e.STUDENT_ID=?1 and e.CID = ?2", nativeQuery = true)
+	public Enrollments checkIfStudentRegistered(int student_id,int CID);
 }

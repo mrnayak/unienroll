@@ -428,7 +428,7 @@ public class StudentService {
 				
 		System.out.println("Registered courses: ");
 		
-		List<CourseListing> registeredCourses = courseListingDao.getRegisteredCourseBySem(currentSem.getKey().getSem(), currentSem.getKey().getYear());
+		List<CourseListing> registeredCourses = courseListingDao.getRegisteredCourseBySem(currentSem.getKey().getSem(), currentSem.getKey().getYear(), student.getStudentID());
 		counter = 1;
 		for (CourseListing courseEnt : registeredCourses) {
 			String schedule=courseEnt.isMon()?"M":"";
@@ -498,7 +498,7 @@ public class StudentService {
 		Semester currentSem = openSem.get(semResponseInt -1);				
 		System.out.println("Waitlisted courses: ");		
 		
-		List<CourseListing> wlCourses = courseListingDao.getWLourseBySem(currentSem.getKey().getSem(), currentSem.getKey().getYear());
+		List<CourseListing> wlCourses = courseListingDao.getWLourseBySem(currentSem.getKey().getSem(), currentSem.getKey().getYear(), student.getStudentID());
 		counter = 1;
 		for (CourseListing courseEnt : wlCourses) {
 			String schedule=courseEnt.isMon()?"M":"";
@@ -562,7 +562,7 @@ private void viewPendingCourses(){
 	String semResponse = scanner.next();
 	
 	Semester currentSem = openSem.get(Integer.valueOf(semResponse)-1);
-	List<CourseListing> penCourses = courseListingDao.getPendingCourseBySem(currentSem.getKey().getSem(), currentSem.getKey().getYear());
+	List<CourseListing> penCourses = courseListingDao.getPendingCourseBySem(currentSem.getKey().getSem(), currentSem.getKey().getYear(), student.getStudentID());
 	counter = 1;
 	for (CourseListing courseEnt : penCourses) {
 		String schedule=courseEnt.isMon()?"M":"";

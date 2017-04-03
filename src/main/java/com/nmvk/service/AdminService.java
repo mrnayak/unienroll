@@ -215,17 +215,17 @@ public class AdminService {
 		List<SpecialReq> specialPerms = specialPermDao.getAllPendingSpecialReqs();
 
 		for (int i = 0; i < specialPerms.size(); i++) {
-			System.out.println("Choice:" + i + " Class ID: " + specialPerms.get(i).getcId() + " Classroom ID: "
-					+ specialPerms.get(i).getClassroomId() + " Student GPA: " + specialPerms.get(i).getGpa()
+			System.out.println("Choice:" + i + " Class ID: " + specialPerms.get(i).getKey().getcId() + " Classroom ID: "
+					+ specialPerms.get(i).getKey().getClassroomId() + " Student GPA: " + specialPerms.get(i).getGpa()
 					+ " Order of enollment: " + specialPerms.get(i).getOrderNumber() + " Schedule ID: "
-					+ specialPerms.get(i).getScheduleId() + " Student ID: " + specialPerms.get(i).getStudentId());
+					+ specialPerms.get(i).getKey().getScheduleId() + " Student ID: " + specialPerms.get(i).getKey().getStudentId());
 		}
 		System.out.println("Enter the choice number to remove a Student, -1: to just exit");
 		Integer choice = Integer.parseInt(scanner.next());
 		SpecialReq rowToDelete = specialPerms.get(choice);
 		if (choice == 0) {
-			specialPermDao.deleteSpecialPerm(rowToDelete.getStudentId(), rowToDelete.getScheduleId(),
-					rowToDelete.getClassroomId());
+			specialPermDao.deleteSpecialPerm(rowToDelete.getKey().getStudentId(), rowToDelete.getKey().getScheduleId(),
+					rowToDelete.getKey().getClassroomId());
 			System.out.print("Student removed from list successfully");
 		} else {
 			return;

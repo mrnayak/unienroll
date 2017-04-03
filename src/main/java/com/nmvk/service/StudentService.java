@@ -69,6 +69,7 @@ public class StudentService {
 			System.out.println("2. View Offerings");
 			System.out.println("3. View Registered courses");
 			System.out.println("4. View Waitlisted courses ");
+			System.out.println("5. View Pending courses ");
 			System.out.println("5. View/Pay Bill ");
 			System.out.println("6. Logout");
 			System.out.println("Please enter choice : ");
@@ -89,7 +90,7 @@ public class StudentService {
 				viewWaitlistedCourses();
 				continue;
 			case "5":
-				viewPayBill();
+				viewPendingCourses();
 				continue;
 			case "6":
 				break;
@@ -340,7 +341,50 @@ private void viewWaitlistedCourses(){
 		
 	}
 	
-	/*
+private void viewPendingCourses(){
+	
+	//Student_id
+	int student_id=1;
+	System.out.println("Open Semesters, choose: ");
+	List<Semester> openSem = semesterDao.getActiveSem();
+	
+	int counter = 1;
+	for (Semester sem : openSem) {
+
+		System.out.println(String.valueOf(counter)+":"+sem.getKey().getSem()+" "+sem.getKey().getYear());
+		counter+=1;
+	}
+	String semResponse = scanner.next();
+	
+	Semester currentSem = openSem.get(Integer.valueOf(semResponse)-1);
+	List<CourseListing> penCourses = courseListingDao.getPendingCourseBySem(currentSem.getKey().getSem(), currentSem.getKey().getYear());
+	counter = 1;
+	for (CourseListing courseEnt : penCourses) {
+		String schedule=courseEnt.isMon()?"M":"";
+		schedule+=courseEnt.isTue()?"T":"";
+		schedule+=courseEnt.isWed()?"W":"";
+		schedule+=courseEnt.isThu()?"Th":"";
+		schedule+=courseEnt.isFri()?"F":"";
+		schedule+=String.valueOf(" "+courseEnt.getStart_hour())+":"+String.valueOf(courseEnt.getStart_min())+"-"+String.valueOf(courseEnt.getEnd_hour())+":"+String.valueOf(courseEnt.getEnd_min());
+	
+	
+	System.out.println(String.valueOf(counter)+":"+courseEnt.getName()+" "+courseEnt.getDepartment()+" "+courseEnt.getRemaining()+" "+schedule);
+	
+	
+	counter+=1;
+	}
+	System.out.println("press 0 to go back");
+	String response = scanner.next();
+	while(Integer.valueOf(response)!=0){
+		System.out.println("invalid.press 0 to go back");
+		response = scanner.next();
+	}
+	
+}
+
+
+
+/*
 	 View Letter Grades and GPA
 	 * 1. Displays Letter Grades
 	 * 2. Displays GPA

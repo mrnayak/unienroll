@@ -13,8 +13,8 @@ import com.nmvk.domain.Enrollments;
 public interface EnrollmentDao extends CrudRepository<Enrollments, Long>{
 	
 	@Modifying
-	@Query(value = "INSERT INTO ENROLLMENTS(STUDENT_ID, GPA, SCHED_ID, CLASSROOM_ID, CID, ORDER_NUM, SEM, YEAR) VALUES(?1,null,?2,?3,?4,?5,?6,?7)", nativeQuery = true)
-	public void addToEnrollment(int student_id,int schedule_id,int classroom_id,int CID,int order_num,String sem,String year);
+	@Query(value = "INSERT INTO ENROLLMENTS(STUDENT_ID, GPA, SCHED_ID, CLASSROOM_ID, CID, ORDER_NUM, SEM, YEAR,CREDIT) VALUES(?1,null,?2,?3,?4,?5,?6,?7,?8)", nativeQuery = true)
+	public void addToEnrollment(int student_id,int schedule_id,int classroom_id,int CID,int order_num,String sem,String year,int credit);
 	
 	@Query(value = "SELECT * FROM ENROLLMENTS WHERE STUDENT_ID = ?1 AND SCHED_ID = ?2 AND CLASSROOM_ID = ?3 AND CID = ?4 AND SEM = ?5 AND YEAR = ?6 ", nativeQuery = true)
 	public Enrollments getByIds(Integer studentId, Integer scheduleId, Integer classroomId, Integer courseId, String sem, String year);

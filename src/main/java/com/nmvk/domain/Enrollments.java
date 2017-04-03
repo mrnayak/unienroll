@@ -22,6 +22,17 @@ public class Enrollments implements Serializable{
 	@Column(name = "ORDER_NUM") // Order in which a student gets enrolled. Should update when some student drops a course
 	Integer orderNumber;
 
+	@Column(name="CREDIT")
+	Integer credit;
+	
+	public Integer getCredit() {
+		return credit;
+	}
+
+	public void setCredit(Integer credit) {
+		this.credit = credit;
+	}
+
 	public EnrollmentKey getKey() {
 		return key;
 	}

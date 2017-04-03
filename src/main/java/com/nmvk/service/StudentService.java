@@ -17,6 +17,7 @@ import com.nmvk.dao.SemWiseGPADao;
 import com.nmvk.dao.SemesterDao;
 import com.nmvk.dao.SpecialPermDao;
 import com.nmvk.dao.StudentDao;
+import com.nmvk.domain.Course;
 import com.nmvk.domain.CourseListing;
 import com.nmvk.domain.Enrollments;
 import com.nmvk.domain.Faculty;
@@ -298,10 +299,10 @@ public class StudentService {
 			// TODO: Add condition to check if all preconditions are met
 			boolean isEnrolled = checkIfEnrolled(student.getStudentID(), courseToRegister, currentSem); 
 			if(!isEnrolled){
-				boolean creditLimitExceeded=true;
+				boolean creditLimitExceeded=false;
 				if(!creditLimitExceeded){
-				
-				
+					
+					
 					int status=0;
 					int prereqstatus=checkPreReqCourses(courseToRegister);
 					int gpaStatus=checkGPACOndition(courseToRegister);
@@ -686,6 +687,18 @@ private void viewPendingCourses(){
 	private boolean enrollForCourse(int studentId, CourseListing courseToRegister, Semester currentSem){
 		try{
 			Integer courseId = courseToRegister.getKey().getCid();
+			Course course=courseDao.getById(courseId);
+			int credit=course.getCredit();
+			
+			if (credit==0){
+				System.out.println("*********** Since this is a variable course, please enter credits (1-3) ***********\n");
+				String creditString = scanner.next();
+				Integer creditInt = validateIntScanWithLimit(creditString, 3);
+				credit=creditInt;
+			}
+			
+			
+			
 			Integer scheduleId = courseToRegister.getKey().getSched_id();
 			Integer classRoomId = courseToRegister.getKey().getClassroom_id(); 
 			//System.out.println("Offering offering = offeringDao.getByIds(courseId, scheduleId, classRoomId, currentSem.getKey().getSem(), currentSem.getKey().getYear());");
@@ -719,13 +732,16 @@ private void viewPendingCourses(){
 					System.out.println("*********** Enrollment in progress ***********\n");
 				}
 				
+				
+				
 				enrollmentDao.addToEnrollment(studentId, 
 						courseToRegister.getKey().getSched_id(), 
 						courseToRegister.getKey().getClassroom_id(), 
 						courseToRegister.getKey().getCid(), 
 						orderNumber,
 						currentSem.getKey().getSem(),
-						String.valueOf(currentSem.getKey().getYear()));
+						String.valueOf(currentSem.getKey().getYear()),
+						credit);
 //				if(updateBillForCourseEnroll(studentId)){
 //					System.out.println("$$$$$$$$$ Student successfully billed $$$$$$$$$\n");
 //				}

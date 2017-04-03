@@ -27,6 +27,9 @@ public class StudentService {
 	Scanner scanner;
 	
 	@Autowired
+	LoginService login;
+	
+	@Autowired
 	EnrollmentDao enrollmentDao;
 	
 	@Autowired
@@ -64,8 +67,8 @@ public class StudentService {
 			System.out.println("\n**********Main menu**********");
 			System.out.println("1. View/Edit Profile "); //done
 			System.out.println("2. View Offerings");
-			System.out.println("3. View Pending courses (Pending, Rejected, Waitlisted) ");
-			System.out.println("4. View Grades ");
+			System.out.println("3. View Registered courses");
+			System.out.println("4. View Waitlisted courses ");
 			System.out.println("5. View/Pay Bill ");
 			System.out.println("6. Logout");
 			System.out.println("Please enter choice : ");
@@ -80,10 +83,10 @@ public class StudentService {
 				viewCourses();
 				continue;
 			case "3":
-				viewPendingCourses();
+				viewRegisteredCourses();
 				continue;
 			case "4":
-				viewGrades();
+				viewWaitlistedCourses();
 				continue;
 			case "5":
 				viewPayBill();
@@ -256,19 +259,86 @@ public class StudentService {
 		View Courses and Status
 		Press 0 To Go Back To Previous Menu
 	*/
-	private void viewPendingCourses(){
-		//TODO: not sure whether to show courses related to just student or all courses
-		System.out.println("Courses and their Status");
-		// TODO: Print list of courses which are pending/rejected/waitlisted
-		System.out.println("Press 0 to Go Back");
-		String value = scanner.next();
-		while (!value.equals("0")) {
-			System.out.println("Only '0' is valid input.");
-			System.out.println("Press 0 to Go Back");
-			value = scanner.next();
-		}		
+	private void viewRegisteredCourses(){
+		
+		//Student_id
+		int student_id=1;
+		System.out.println("Open Semesters, choose: ");
+		List<Semester> openSem = semesterDao.getActiveSem();
+		
+		int counter = 1;
+		for (Semester sem : openSem) {
+
+			System.out.println(String.valueOf(counter)+":"+sem.getKey().getSem()+" "+sem.getKey().getYear());
+			counter+=1;
+		}
+		String semResponse = scanner.next();
+		Semester currentSem = openSem.get(Integer.valueOf(semResponse)-1);
+		List<CourseListing> registeredCourses = courseListingDao.getRegisteredCourseBySem(currentSem.getKey().getSem(), currentSem.getKey().getYear());
+		counter = 1;
+		for (CourseListing courseEnt : registeredCourses) {
+			String schedule=courseEnt.isMon()?"M":"";
+			schedule+=courseEnt.isTue()?"T":"";
+			schedule+=courseEnt.isWed()?"W":"";
+			schedule+=courseEnt.isThu()?"Th":"";
+			schedule+=courseEnt.isFri()?"F":"";
+			schedule+=String.valueOf(" "+courseEnt.getStart_hour())+":"+String.valueOf(courseEnt.getStart_min())+"-"+String.valueOf(courseEnt.getEnd_hour())+":"+String.valueOf(courseEnt.getEnd_min());
+		
+		
+		System.out.println(String.valueOf(counter)+":"+courseEnt.getName()+" "+courseEnt.getDepartment()+" "+courseEnt.getRemaining()+" "+schedule);
+		
+		
+		counter+=1;
+		}
+		System.out.println("press 0 to go back");
+		String response = scanner.next();
+		while(Integer.valueOf(response)!=0){
+			System.out.println("invalid.press 0 to go back");
+			response = scanner.next();
+		}
+		
 	}
 	
+private void viewWaitlistedCourses(){
+		
+		//Student_id
+		int student_id=1;
+		System.out.println("Open Semesters, choose: ");
+		List<Semester> openSem = semesterDao.getActiveSem();
+		
+		int counter = 1;
+		for (Semester sem : openSem) {
+
+			System.out.println(String.valueOf(counter)+":"+sem.getKey().getSem()+" "+sem.getKey().getYear());
+			counter+=1;
+		}
+		String semResponse = scanner.next();
+		
+		Semester currentSem = openSem.get(Integer.valueOf(semResponse)-1);
+		List<CourseListing> wlCourses = courseListingDao.getWLourseBySem(currentSem.getKey().getSem(), currentSem.getKey().getYear());
+		counter = 1;
+		for (CourseListing courseEnt : wlCourses) {
+			String schedule=courseEnt.isMon()?"M":"";
+			schedule+=courseEnt.isTue()?"T":"";
+			schedule+=courseEnt.isWed()?"W":"";
+			schedule+=courseEnt.isThu()?"Th":"";
+			schedule+=courseEnt.isFri()?"F":"";
+			schedule+=String.valueOf(" "+courseEnt.getStart_hour())+":"+String.valueOf(courseEnt.getStart_min())+"-"+String.valueOf(courseEnt.getEnd_hour())+":"+String.valueOf(courseEnt.getEnd_min());
+		
+		
+		System.out.println(String.valueOf(counter)+":"+courseEnt.getName()+" "+courseEnt.getDepartment()+" "+courseEnt.getRemaining()+" "+schedule);
+		
+		
+		counter+=1;
+		}
+		System.out.println("press 0 to go back");
+		String response = scanner.next();
+		while(Integer.valueOf(response)!=0){
+			System.out.println("invalid.press 0 to go back");
+			response = scanner.next();
+		}
+		
+	}
 	
 	/*
 	 View Letter Grades and GPA

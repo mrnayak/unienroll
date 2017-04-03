@@ -19,6 +19,13 @@ public interface EnrollmentDao extends CrudRepository<Enrollments, Long>{
 	@Query(value = "SELECT * FROM ENROLLMENTS WHERE STUDENT_ID = ?1 AND SCHED_ID = ?2 AND CLASSROOM_ID = ?3 AND CID = ?4 AND SEM = ?5 AND YEAR = ?6 ", nativeQuery = true)
 	public Enrollments getByIds(Integer studentId, Integer scheduleId, Integer classroomId, Integer courseId, String sem, String year);
 	
+	@Query(value = "SELECT * FROM ENROLLMENTS WHERE STUDENT_ID = ?1 AND CID = ?2", nativeQuery = true)
+	public Enrollments getByStudentAndCourse(Integer studentId, Integer cid);
+	
+	@Modifying
+	@Query(value = "UPDATE ENROLLMENTS SET GPA = ?3 WHERE STUDENT_ID = ?1 AND CID = ?2", nativeQuery = true)
+	public void updateGPA(Integer studentId, Integer cid, Float gpa);
+	
 	@Query(value = "SELECT ORDER_NUM FROM ENROLLMENTS WHERE STUDENT_ID = ?1 AND SCHED_ID = ?2 AND CLASSROOM_ID = ?3 AND CID = ?4 AND SEM = ?5 AND YEAR = ?6 ", nativeQuery = true)
 	public Integer getOrderNumber(Integer studentId, Integer scheduleId, Integer classroomId, Integer courseId, String sem, String year);
 	

@@ -34,6 +34,9 @@ public interface StudentDao extends CrudRepository<Student, Long>{
 	@Query(value = "select AVG(GPA) from ENROLLMENTS where student_id = ?1", nativeQuery = true)
 	public Float getOverallAvgGPA(Integer student_id);
 	
+	@Modifying
+	@Query(value = "UPDATE STUDENT SET GPA = (select AVG(GPA) from ENROLLMENTS where student_id = ?1) WHERE STUDENT_ID = ?1", nativeQuery = true)
+	public void setGPA(Integer student_id);
 	
 	@Query(value = "SELECT AVG(GPA) AS GPA, SEM, YEAR FROM ENROLLMENTS WHERE STUDENT_ID = ?1 GROUP BY YEAR, SEM", nativeQuery = true)
 	public List<SemWiseGPA> getSemWiseGPA(Integer student_id);

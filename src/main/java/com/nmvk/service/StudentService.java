@@ -405,6 +405,7 @@ public class StudentService {
 	private void viewRegisteredCourses(){
 		
 		//Student_id
+
 		int student_id=1;
 		System.out.println("Open Semesters:");
 		List<Semester> openSem = semesterDao.getAllSem();

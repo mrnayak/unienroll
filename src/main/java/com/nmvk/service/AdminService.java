@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import com.nmvk.dao.AdministratorDao;
 import com.nmvk.dao.CourseDao;
+import com.nmvk.dao.CourseListingDao;
+import com.nmvk.dao.EnrollmentDao;
 import com.nmvk.dao.FacultyDao;
 import com.nmvk.dao.FacultyGroupDao;
 import com.nmvk.dao.OfferingDao;
@@ -22,7 +24,10 @@ import com.nmvk.dao.SpecialPermDao;
 import com.nmvk.dao.StudentDao;
 import com.nmvk.domain.Administrator;
 import com.nmvk.domain.Course;
+import com.nmvk.domain.CourseListing;
+import com.nmvk.domain.Enrollments;
 import com.nmvk.domain.Faculty;
+import com.nmvk.domain.Offering;
 import com.nmvk.domain.Semester;
 import com.nmvk.domain.SpecialReq;
 import com.nmvk.domain.Student;
@@ -54,15 +59,21 @@ public class AdminService {
 	ScheduleDao scheduleDao;
 
 	@Autowired
+	EnrollmentDao enrollmentDao;
+
+	@Autowired
 	OfferingDao offeringDao;
 
 	@Autowired
 	FacultyGroupDao facultyGroupDao;
-	
+
 	Administrator administrator;
-	
+
 	@Autowired
 	AdministratorDao administratorDao;
+
+	@Autowired
+	CourseListingDao courseListingDao;
 
 	/**
 	 * 1. View Profile 2. Enroll A New Student 3. View Student’s Details 4.
@@ -71,16 +82,16 @@ public class AdminService {
 	 */
 	public void mainMenu() {
 		administrator = administratorDao.getByEmail(loginService.appUser.getUserName());
-		
+
 		while (true) {
 			System.out.println("1. View Profile "); // done
 			System.out.println("2. Enroll A New Student");
 			System.out.println("3. View Student’s Details "); // done
 			System.out.println("4. View/Add/Edit Courses ");// done
 			System.out.println("5. View/Add Course Offering "); // Add done
-			System.out.println("6. View/Approve Special Enrollment Requests ");//almost
-			System.out.println("7. Enforce Add/Drop Deadline ");//done
-			System.out.println("8. Logout");//done
+			System.out.println("6. View/Approve Special Enrollment Requests ");// almost
+			System.out.println("7. Enforce Add/Drop Deadline ");// done
+			System.out.println("8. Logout");// done
 			System.out.println("Please enter choice : ");
 
 			String value = scanner.next();
@@ -218,7 +229,8 @@ public class AdminService {
 			System.out.println("Choice:" + i + " Class ID: " + specialPerms.get(i).getKey().getcId() + " Classroom ID: "
 					+ specialPerms.get(i).getKey().getClassroomId() + " Student GPA: " + specialPerms.get(i).getGpa()
 					+ " Order of enollment: " + specialPerms.get(i).getOrderNumber() + " Schedule ID: "
-					+ specialPerms.get(i).getKey().getScheduleId() + " Student ID: " + specialPerms.get(i).getKey().getStudentId());
+					+ specialPerms.get(i).getKey().getScheduleId() + " Student ID: "
+					+ specialPerms.get(i).getKey().getStudentId());
 		}
 		System.out.println("Enter the choice number to remove a Student, -1: to just exit");
 		Integer choice = Integer.parseInt(scanner.next());
@@ -322,12 +334,42 @@ public class AdminService {
 		System.out.println("4. Student’s Level :" + student.isLevel());
 		System.out.println("5. Student’s Residency Status :" + student.getResidency());
 		System.out.println("6. Amount Owed(if any) :" + student.getBill());
-		System.out.println("7. GPA :" + student.getBill());
+		System.out.println("7. GPA :" + student.getGpa());
 		System.out.println("8. Phone :" + student.getPhone());
 		System.out.println("9. Email :" + student.getEmail());
 		System.out.println("10. Address :" + student.getAddress());
 		System.out.println("Press 0 To Go Back To Previous Menu");
+		System.out.println("Press 1 to enter grade");
 		String value = scanner.next();
+		
+		if(value.equals("0"))
+			return;
+		
+		if(value.equals("1")) {
+			//Enter grade
+			
+			List<CourseListing> courseListings = courseListingDao.getRegisteredCourseByStudent(student.getStudentID());
+			for(CourseListing courseListing : courseListings) {
+				System.out.println(courseListing.getKey().getCid() +" : " +courseListing.getName());
+			}
+			
+			System.out.println("Entert course ID to update GPA");
+			String cid = scanner.next();
+			
+			Enrollments enrollments = enrollmentDao.getByStudentAndCourse(student.getStudentID(), Integer.parseInt(cid));
+			
+			if(enrollments == null) {
+				System.out.println("Invalid course selection");
+			} else {
+				System.out.println("Existing GPA is " + enrollments.getGpa());
+				System.out.println("Enter new GPA");
+				String gpa = scanner.next();
+				enrollmentDao.updateGPA(student.getStudentID(), Integer.parseInt(cid), Float.parseFloat(gpa));
+				System.out.println("Successfully updated GPA");
+				
+				studentDao.setGPA(student.getStudentID());
+			}
+		}
 	}
 
 	public void viewAddCourse() {

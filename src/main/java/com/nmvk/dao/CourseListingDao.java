@@ -4,13 +4,10 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
-import com.nmvk.domain.Course;
 import com.nmvk.domain.CourseListing;
-import com.nmvk.domain.Semester;
 
 
 @Transactional
@@ -21,6 +18,9 @@ public interface CourseListingDao extends CrudRepository<CourseListing, Long>{
 	
 	@Query(value = "select  c.CID,e.SCHED_ID,e.CLASSROOM_ID,c.NAME,c.DEPARTMENT,c.CREDIT,o.REMAINING,s.MON,s.TUE,s.WED,s.THU,s.FRI,s.START_HOUR,s.START_MIN,s.END_HOUR,s.END_MIN from ENROLLMENTS e,offerings o,COURSE c,SCHEDULE s where e.SCHED_ID = s.SID and e.CID = c.CID and e.CID = o.CID and e.SCHED_ID = o.SCHED_ID and e.CLASSROOM_ID = o.CLASSROOM_ID and e.SEM = o.sem and e.YEAR = o.YEAR and e.student_id = 1 and e.sem = ?1 and e.year = ?2 and e.ORDER_NUM <= o.MAX",nativeQuery = true)
 	public List<CourseListing> getRegisteredCourseBySem(String sem,int year);
+	
+	@Query(value = "select  c.CID,e.SCHED_ID,e.CLASSROOM_ID,c.NAME,c.DEPARTMENT,c.CREDIT,o.REMAINING,s.MON,s.TUE,s.WED,s.THU,s.FRI,s.START_HOUR,s.START_MIN,s.END_HOUR,s.END_MIN from ENROLLMENTS e,offerings o,COURSE c,SCHEDULE s where e.SCHED_ID = s.SID and e.CID = c.CID and e.CID = o.CID and e.SCHED_ID = o.SCHED_ID and e.CLASSROOM_ID = o.CLASSROOM_ID and e.SEM = o.sem and e.YEAR = o.YEAR and e.student_id = ?1 and e.ORDER_NUM <= o.MAX",nativeQuery = true)
+	public List<CourseListing> getRegisteredCourseByStudent(Integer studentId);
 	
 	@Query(value = "select  c.CID,e.SCHED_ID,e.CLASSROOM_ID,c.NAME,c.DEPARTMENT,c.CREDIT,o.REMAINING,s.MON,s.TUE,s.WED,s.THU,s.FRI,s.START_HOUR,s.START_MIN,s.END_HOUR,s.END_MIN from ENROLLMENTS e,offerings o,COURSE c,SCHEDULE s where e.SCHED_ID = s.SID and e.CID = c.CID and e.CID = o.CID and e.SCHED_ID = o.SCHED_ID and e.CLASSROOM_ID = o.CLASSROOM_ID and e.SEM = o.sem and e.YEAR = o.YEAR and e.student_id = 1 and e.sem = ?1 and e.year = ?2 and e.ORDER_NUM > o.MAX and e.ORDER_NUM <= (o.MAX+o.waitlist)",nativeQuery = true)
 	public List<CourseListing> getWLourseBySem(String sem,int year);

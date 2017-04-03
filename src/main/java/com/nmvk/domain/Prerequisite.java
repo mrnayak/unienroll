@@ -3,6 +3,7 @@ package com.nmvk.domain;
 import java.io.Serializable;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
@@ -21,29 +22,21 @@ public class Prerequisite implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	@Id
-	@Column(name = "CID")
-	private int courseID;
-	
-	@Id
-	@Column(name = "REQ_CID")
-	private String requiredCourseID;
+	@EmbeddedId
+	PrerepKey key;
 
-	public int getCourseID() {
-		return courseID;
+	public PrerepKey getKey() {
+		return key;
 	}
 
-	public void setCourseID(int courseID) {
-		this.courseID = courseID;
+	public void setKey(PrerepKey key) {
+		this.key = key;
 	}
 
-	public String getRequiredCourseID() {
-		return requiredCourseID;
+	public static long getSerialversionuid() {
+		return serialVersionUID;
 	}
 
-	public void setRequiredCourseID(String requiredCourseID) {
-		this.requiredCourseID = requiredCourseID;
-	}
 	
 }
 

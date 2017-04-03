@@ -17,6 +17,10 @@ public interface SpecialPermDao extends CrudRepository<SpecialReq, Long>{
 	public List<SpecialReq> getAllPendingSpecialReqs();
 	
 	@Modifying
+	@Query(value = "insert into SPECIAL_REQ values(?1,null,?2,?3,?4,0,?5,?6) ", nativeQuery = true)
+	public void addSpecialPerm(Integer studentId, Integer schedId, Integer classroomId, Integer cid,String sem,int year);
+	
+	@Modifying
 	@Query(value = "DELETE FROM SPECIAL_REQ WHERE STUDENT_ID = ?1 AND SCHED_ID = ?2 AND CLASSROOM_ID = ?3 ", nativeQuery = true)
 	public void deleteSpecialPerm(Integer studentId, Integer schedId, Integer classroomId);
 }

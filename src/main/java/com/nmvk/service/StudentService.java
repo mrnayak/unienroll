@@ -6,17 +6,23 @@ import java.util.Scanner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.nmvk.dao.CourseDao;
 import com.nmvk.dao.CourseListingDao;
 import com.nmvk.dao.EnrollmentDao;
 import com.nmvk.dao.FacultyDao;
 import com.nmvk.dao.OfferingDao;
+import com.nmvk.dao.PreReqDao;
+import com.nmvk.dao.PreconditionDao;
 import com.nmvk.dao.SemWiseGPADao;
 import com.nmvk.dao.SemesterDao;
+import com.nmvk.dao.SpecialPermDao;
 import com.nmvk.dao.StudentDao;
 import com.nmvk.domain.CourseListing;
 import com.nmvk.domain.Enrollments;
 import com.nmvk.domain.Faculty;
 import com.nmvk.domain.Offering;
+import com.nmvk.domain.Preconditionrequirement;
+import com.nmvk.domain.Prerequisite;
 import com.nmvk.domain.SemWiseGPA;
 import com.nmvk.domain.Semester;
 import com.nmvk.domain.Student;
@@ -32,6 +38,9 @@ public class StudentService {
 	
 	@Autowired
 	EnrollmentDao enrollmentDao;
+	
+	@Autowired
+	PreReqDao prereqDao;
 	
 	@Autowired
 	FacultyDao facultyDao;
@@ -55,7 +64,15 @@ public class StudentService {
 	
 	@Autowired
 	OfferingDao offeringDao; 
+	
+	@Autowired
+	CourseDao courseDao;
 
+	@Autowired
+	SpecialPermDao specialPermDao;
+	
+	@Autowired
+	PreconditionDao preconditionDao;
 	
 	/**
 	 * 1. View/Edit Profile
@@ -74,7 +91,7 @@ public class StudentService {
 			System.out.println("3. View Registered courses");
 			System.out.println("4. View Waitlisted courses ");
 			System.out.println("5. View Pending courses ");
-			System.out.println("5. View/Pay Bill ");
+			System.out.println("6. View grades");
 			System.out.println("6. Logout");
 			System.out.println("Please enter choice : ");
 
@@ -97,6 +114,7 @@ public class StudentService {
 				viewPendingCourses();
 				continue;
 			case "6":
+				viewGrades();
 				break;
 			default:
 				System.out.println("Invalid option selected");
@@ -267,25 +285,111 @@ public class StudentService {
 		
 		// if value is 0 skip below if condition
 		if(addCourseValueInt != 0){
+			
+			
 			CourseListing courseToRegister = courseList.get(addCourseValueInt - 1);
 			
 			// TODO: Add condition to check if all preconditions are met
 			boolean isEnrolled = checkIfEnrolled(student.getStudentID(), courseToRegister, currentSem); 
 			if(!isEnrolled){
-				if(enrollForCourse(student.getStudentID(), courseToRegister, currentSem)){
-					System.out.println("***********Enrollment successful***********");
+				boolean creditLimitExceeded=true;
+				if(!creditLimitExceeded){
+				
+				
+					int status=0;
+					int prereqstatus=checkPreReqCourses(courseToRegister);
+					int gpaStatus=checkGPACOndition(courseToRegister);
+					int specialPermStatus=checkSpecialPerm(courseToRegister);
+					
+					if(prereqstatus==0){
+						if(gpaStatus==0){
+							if(specialPermStatus==0){
+								status=0;
+							}
+							else{
+								System.out.println("###########Special Permission required###########");
+								System.out.println("###########Request Sent###########");
+								specialPermDao.addSpecialPerm(student.getStudentID(),courseToRegister.getKey().getSched_id() , courseToRegister.getKey().getClassroom_id(), courseToRegister.getKey().getCid(),currentSem.getKey().getSem(),currentSem.getKey().getYear());
+								status=1;
+							}
+						}
+						else{
+							System.out.println("###########GPA requirement not met###########");
+							status=1;
+						}
+					}
+					else{
+						System.out.println("###########Prerequisites not met###########");
+						status=1;
+					}
+					
+					
+					if (status==0){
+						if(enrollForCourse(student.getStudentID(), courseToRegister, currentSem)){
+							System.out.println("***********Enrollment successful***********");
+						}
+						else{
+							System.out.println("###########Enrollment not successful###########");
+						}
+					}	
 				}
 				else{
-					System.out.println("###########Enrollment not successful###########");
+					System.out.println("Credit limit exceed. please drop a course");
 				}
 			}
 			else{
-				//TODO: If not print saying student can't enroll since the precondition are not met or this clashes with his other courses
-				System.out.println("Already Enrolled");
+			//	TODO: If not print saying student can't enroll since the precondition are not met or this clashes with his other courses
+			System.out.println("Already Enrolled");
 			}
 		}	
 	}
 	
+	private int checkPreReqCourses(CourseListing courseListing){
+		List<Prerequisite> preqCourse = prereqDao.getPreReqCourse(courseListing.getKey().getCid());
+		if(preqCourse.size() != 0){
+			boolean preReqStatus=true;
+			for(Prerequisite preReq: preqCourse){
+				
+				if(enrollmentDao.checkIfStudentRegistered(student.getStudentID(),preReq.getKey().getReq_cid())==null){
+					preReqStatus=false;
+					break;
+				}
+			}
+			if(!preReqStatus){
+				return 1;	
+			}
+			else{
+				return 0;
+			}
+		}
+		return 0;
+	}
+	
+	private int checkGPACOndition(CourseListing courseListing){
+		Preconditionrequirement preconditionGPA = preconditionDao.getGPAReq(courseListing.getKey().getCid()); 
+		
+		if(preconditionGPA==null){
+			return 0;
+		}
+		else if(preconditionGPA.getGpa()<4){
+			return 0;
+			}
+		else{
+			return 1;
+		}
+	}
+	
+	private int checkSpecialPerm(CourseListing courseListing){
+		
+		Preconditionrequirement preconditionList = preconditionDao.getSpecialPerm(courseListing.getKey().getCid());
+		if(preconditionList!=null){
+			return 1;
+		}
+		else{
+			return 0;
+		}
+		
+	}
 	
 	/*
 		View Courses and Status
@@ -296,7 +400,7 @@ public class StudentService {
 		//Student_id
 		int student_id=1;
 		System.out.println("Open Semesters:");
-		List<Semester> openSem = semesterDao.getActiveSem();
+		List<Semester> openSem = semesterDao.getAllSem();
 		
 		int counter = 1;
 		for (Semester sem : openSem) {
@@ -642,7 +746,7 @@ private void viewPendingCourses(){
 				currentSem.getKey().getSem(),
 				String.valueOf(currentSem.getKey().getYear()));
 		if(enrollment == null){
-			System.out.println("enrollment == null True, so returning false");
+			
 			return false;
 		}
 		return true;		

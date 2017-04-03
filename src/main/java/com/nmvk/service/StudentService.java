@@ -249,28 +249,6 @@ public class StudentService {
 		
 		enrollmentDao.addToEnrollment(1,courseToRegister.getKey().getSched_id(), courseToRegister.getKey().getClassroom_id(), courseToRegister.getKey().getCid(), 20, currentSem.getKey().getSem(), String.valueOf(currentSem.getKey().getYear()));
 		System.out.println("success");
-		
-		
-		
-		System.out.println("Press 0 to Go Back");
-		System.out.println("Enroll for a course : ");
-		System.out.println("1. Enter Course Id : ");
-		// TODO: handle case where use doesn't want to enroll
-		
-		String value = scanner.next();
-		// TODO: Enroll user to a course as per input
-		
-		
-		System.out.println("List of Enrolled Courses: ");
-		// TODO: List all enrolled courses
-		
-		
-		while (!value.equals("0")) {
-			System.out.println("Only '0' is valid input.");
-			System.out.println("Press 0 to Go Back");
-			value = scanner.next();
-		}
-		
 	}
 	
 	

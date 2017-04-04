@@ -231,18 +231,20 @@ public class AdminService {
 					+ " Order of enollment: " + specialPerms.get(i).getOrderNumber() + " Schedule ID: "
 					+ specialPerms.get(i).getKey().getScheduleId() + " Student ID: "
 					+ specialPerms.get(i).getKey().getStudentId());
-			
+
 			System.out.println("Approve this request? Yes/No");
 			String status = scanner.next();
-			
-			if(status.equals("yes")) {
+
+			if (status.equals("yes")) {
 				SpecialReq sp = specialPerms.get(i);
 				sp.setIs_approved(true);
 				sp.setEmployeeId(administrator.getEmployee_id());
 				specialPermDao.save(sp);
+
+				enrollForCourse(sp.getKey().getStudentId(), sp.getKey().getScheduleId(), sp.getKey().getClassroomId(),
+						sp.getKey().getcId(), sp.getKey().getSem(), parseInt(sp.getKey().getYear()));
 			}
 		}
-		
 
 	}
 
@@ -307,10 +309,10 @@ public class AdminService {
 			System.out.println("Please enter amount again");
 			amount = scanner.next();
 		}
-		
+
 		System.out.println("8. Enter email");
 		String email = scanner.next();
-		
+
 		studentDao.insert(Integer.parseInt(studentId), firstName, lastName, dob, Integer.parseInt(level),
 				Integer.parseInt(resident), Integer.parseInt(amount), email);
 	}
@@ -345,24 +347,25 @@ public class AdminService {
 		System.out.println("Press 0 To Go Back To Previous Menu");
 		System.out.println("Press 1 to enter grade");
 		String value = scanner.next();
-		
-		if(value.equals("0"))
+
+		if (value.equals("0"))
 			return;
-		
-		if(value.equals("1")) {
-			//Enter grade
-			
+
+		if (value.equals("1")) {
+			// Enter grade
+
 			List<CourseListing> courseListings = courseListingDao.getRegisteredCourseByStudent(student.getStudentID());
-			for(CourseListing courseListing : courseListings) {
-				System.out.println(courseListing.getKey().getCid() +" : " +courseListing.getName());
+			for (CourseListing courseListing : courseListings) {
+				System.out.println(courseListing.getKey().getCid() + " : " + courseListing.getName());
 			}
-			
+
 			System.out.println("Entert course ID to update GPA");
 			String cid = scanner.next();
-			
-			Enrollments enrollments = enrollmentDao.getByStudentAndCourse(student.getStudentID(), Integer.parseInt(cid));
-			
-			if(enrollments == null) {
+
+			Enrollments enrollments = enrollmentDao.getByStudentAndCourse(student.getStudentID(),
+					Integer.parseInt(cid));
+
+			if (enrollments == null) {
 				System.out.println("Invalid course selection");
 			} else {
 				System.out.println("Existing GPA is " + enrollments.getGpa());
@@ -370,7 +373,7 @@ public class AdminService {
 				String gpa = scanner.next();
 				enrollmentDao.updateGPA(student.getStudentID(), Integer.parseInt(cid), Float.parseFloat(gpa));
 				System.out.println("Successfully updated GPA");
-				
+
 				studentDao.setGPA(student.getStudentID());
 			}
 		}
@@ -488,7 +491,108 @@ public class AdminService {
 		}
 	}
 
+	private boolean enrollForCourse(int studentId, Integer scheduleId, Integer classroomId, Integer courseId,
+			String sem, Integer year) {
+		try {
+			Course course = courseDao.getById(courseId);
+			int credit = course.getCredit();
+			Student student = studentDao.getById(studentId);
+			if (credit == 0) {
+				System.out.println(
+						"*********** Since this is a variable course, please enter credits (1-3) ***********\n");
+				String creditString = scanner.next();
+				Integer creditInt = validateIntScanWithLimit(creditString, 3);
+				credit = creditInt;
+			}
+
+			int totalCreditRegistered = enrollmentDao.getRegisteredCredit(student.getStudentID(), sem,
+					String.valueOf(year));
+			int limitCredit = enrollmentDao.getMaxCreditLimit(student.isLevel() ? 1 : 0, student.getResidency());
+			if (totalCreditRegistered + credit > limitCredit) {
+				System.out.println("*********** Credit limit exceeded. drop a course ***********\n");
+				return false;
+			}
+
+			// System.out.println("Offering offering =
+			// offeringDao.getByIds(courseId, scheduleId, classRoomId,
+			// currentSem.getKey().getSem(), currentSem.getKey().getYear());");
+			// System.out.println(courseId+ "," + scheduleId + "," + classRoomId
+			// + "," + currentSem.getKey().getSem() + "," +
+			// currentSem.getKey().getYear());
+			Offering offering = new Offering();
+			try {
+				offering = offeringDao.getByIds(courseId, scheduleId, classroomId, sem, year);
+			} catch (Exception e) {
+				System.out.println("***********SOME DB ERROR: FAILED TO GET OFFERING***********");
+				System.out.println(e);
+				System.out.println("***********SOME DB ERROR: FAILED TO GET OFFERING***********");
+			}
+			if (offering != null && offering.getRemaining() > 0) {
+				try {
+					// System.out.println("offeringDao.decrementRemaining(courseId,
+					// scheduleId, classRoomId, currentSem.getKey().getSem(),
+					// currentSem.getKey().getYear());");
+					offeringDao.decrementRemaining(courseId, scheduleId, classroomId, sem, year);
+				} catch (Exception e) {
+					System.out.println("***********SOME DB ERROR: FAILED TO ENROLL DECREASE REMAINING***********");
+					System.out.println(e);
+					System.out.println("***********SOME DB ERROR: FAILED TO ENROLL DECREASE REMAINING***********");
+				}
+				Integer orderNumber = offering.getMax() + offering.getWaitList() - offering.getRemaining() + 1;
+				// System.out.println("Order Number : " + orderNumber);
+				if (orderNumber > offering.getMax()) {
+					Integer waitlistOrder = orderNumber - offering.getMax();
+					System.out.println("&&&&&&&&&&& You are being enrolled to waitlist position " + waitlistOrder
+							+ " out of " + offering.getWaitList() + "&&&&&&&&&&&\n");
+				} else {
+					System.out.println("*********** Enrollment in progress ***********\n");
+				}
+
+				enrollmentDao.addToEnrollment(studentId, scheduleId, classroomId, courseId, orderNumber, sem,
+						String.valueOf(year), credit);
+				// if(updateBillForCourseEnroll(studentId)){
+				// System.out.println("$$$$$$$$$ Student successfully billed
+				// $$$$$$$$$\n");
+				// }
+			} else {
+				System.out.println("########### All seats are filled, can't enroll further ###########\n\n");
+				return false;
+			}
+		}
+		// Catch IntegretyConstraintException and handle some how
+		catch (Exception e) {
+			System.out.println("***********SOME DB ERROR: FAILED TO ENROLL A STUDENT***********");
+			System.out.println(e);
+			System.out.println("***********SOME DB ERROR: FAILED TO ENROLL A STUDENT***********");
+		}
+		return true;
+	}
+
 	static int parseInt(String s) {
 		return Integer.parseInt(s);
+	}
+
+	private Integer validateIntScanWithLimit(String scanString, int limit) {
+		Integer scanInt = 1;
+		while (!scanString.equals("0")) {
+			try {
+				scanInt = Integer.parseInt(scanString);
+				if (scanInt <= limit && scanInt > 0) {
+					break;
+				} else {
+					System.out.println("Invalid option entered, please enter again or Enter 0 to continue");
+					scanString = scanner.next();
+					continue;
+				}
+			} catch (NumberFormatException e) {
+				System.out.println("Invalid option entered, please enter again or Enter 0 to continue");
+				scanString = scanner.next();
+				continue;
+			}
+		}
+		if (scanString.equals("0")) {
+			scanInt = 0;
+		}
+		return scanInt;
 	}
 }

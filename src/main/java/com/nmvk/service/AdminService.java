@@ -448,32 +448,6 @@ public class AdminService {
 		System.out.println("\n******** Returning to main menu*********\n");		
 	}
 	
-	private Integer validateIntScanWithLimit(String scanString, int limit) {
-		Integer scanInt = 1;
-		while(!scanString.equals("0")){
-			try{
-				scanInt = Integer.parseInt(scanString);
-				if(scanInt <= limit && scanInt > 0){
-					break;
-				}
-				else{
-					System.out.println("Invalid option entered, please enter again or Enter 0 to continue or to return");
-					scanString = scanner.next();
-					continue;
-				}
-			}
-			catch(NumberFormatException e){
-				System.out.println("Invalid option entered, please enter again or Enter 0 to continue or to return");
-				scanString = scanner.next();
-				continue;
-			}
-		}
-		if(scanString.equals("0")){
-			scanInt = 0;
-		}
-		return scanInt;
-	}
-
 	void addNewCourseOffering() {
 		System.out.println("1. Enter Course Id : ");
 		String cid = scanner.next();
@@ -659,12 +633,12 @@ public class AdminService {
 				if (scanInt <= limit && scanInt > 0) {
 					break;
 				} else {
-					System.out.println("Invalid option entered, please enter again or Enter 0 to continue");
+					System.out.println("Invalid option entered, please enter again or Enter 0 to continue or return");
 					scanString = scanner.next();
 					continue;
 				}
 			} catch (NumberFormatException e) {
-				System.out.println("Invalid option entered, please enter again or Enter 0 to continue");
+				System.out.println("Invalid option entered, please enter again or Enter 0 to continue or return");
 				scanString = scanner.next();
 				continue;
 			}

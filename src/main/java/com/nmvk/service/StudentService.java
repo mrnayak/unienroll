@@ -254,7 +254,7 @@ public class StudentService {
 		String semResponse = scanner.next();
 		Integer semResponseInt = 1;
 		semResponseInt = validateIntScanWithLimit(semResponse, counter);
-//		if(intSemResponse == 0){
+//		if(semResponseInt == 0){
 //			return;
 //		}
 		

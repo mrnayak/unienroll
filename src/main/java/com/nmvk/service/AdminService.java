@@ -385,11 +385,90 @@ public class AdminService {
 		String value = scanner.next();
 
 		switch (value) {
+		case "1":
+			viewAllCourseOffering();
+			break;
 		case "2":
 			addNewCourseOffering();
 			break;
-
 		}
+	}
+
+	private void viewAllCourseOffering() {
+		System.out.println("Open Semesters:");
+		List<Semester> openSem = semesterDao.getActiveSem();
+		
+		int counter = 1;
+		for (Semester sem : openSem) {
+
+			System.out.println(String.valueOf(counter)+":"+sem.getKey().getSem()+" "+sem.getKey().getYear());
+			counter+=1;
+		}
+		counter--;
+		System.out.println("\n\tTo see offerings from above semesters choose a number between 1 & "+ counter + ". If you don't want press 0 to continue");
+
+		String semResponse = scanner.next();
+		Integer semResponseInt = 1;
+		semResponseInt = validateIntScanWithLimit(semResponse, counter);
+		if(semResponseInt == 0){
+			return;
+		}
+		
+		Semester currentSem = openSem.get(semResponseInt -1);
+		
+		System.out.println(currentSem.getKey().getSem()+" "+currentSem.getKey().getYear());
+		
+		System.out.println("All offered courses: ");
+		List<CourseListing> courseList=courseListingDao.getOfferingsBySem(currentSem.getKey().getSem(),currentSem.getKey().getYear());
+		
+		counter = 1;
+		for (CourseListing courseEnt : courseList) {
+			String schedule=courseEnt.isMon()?"M":"";
+			schedule+=courseEnt.isTue()?"T":"";
+			schedule+=courseEnt.isWed()?"W":"";
+			schedule+=courseEnt.isThu()?"Th":"";
+			schedule+=courseEnt.isFri()?"F":"";
+			schedule+=String.valueOf(" "+courseEnt.getStart_hour())+":"+String.valueOf(courseEnt.getStart_min())+"-"+String.valueOf(courseEnt.getEnd_hour())+":"+String.valueOf(courseEnt.getEnd_min());
+			
+			List<Faculty> facultyList=facultyDao.getFacultyListForCourse(courseEnt.getKey().getCid(), courseEnt.getKey().getSched_id(), courseEnt.getKey().getClassroom_id());
+			String facultytring="";
+			for(Faculty faculty:facultyList){
+				facultytring+=faculty.getName()+" ";
+			}
+			
+			System.out.println(String.valueOf(counter)+":"+courseEnt.getName()+"\t\t"+courseEnt.getDepartment()+" "+courseEnt.getRemaining()+" "+schedule +" "+facultytring);
+			
+			counter+=1;
+		}
+		System.out.println("\nEnter any key to return to main menu");
+		String val = scanner.next();
+		System.out.println("\n******** Returning to main menu*********\n");		
+	}
+	
+	private Integer validateIntScanWithLimit(String scanString, int limit) {
+		Integer scanInt = 1;
+		while(!scanString.equals("0")){
+			try{
+				scanInt = Integer.parseInt(scanString);
+				if(scanInt <= limit && scanInt > 0){
+					break;
+				}
+				else{
+					System.out.println("Invalid option entered, please enter again or Enter 0 to continue or to return");
+					scanString = scanner.next();
+					continue;
+				}
+			}
+			catch(NumberFormatException e){
+				System.out.println("Invalid option entered, please enter again or Enter 0 to continue or to return");
+				scanString = scanner.next();
+				continue;
+			}
+		}
+		if(scanString.equals("0")){
+			scanInt = 0;
+		}
+		return scanInt;
 	}
 
 	void addNewCourseOffering() {

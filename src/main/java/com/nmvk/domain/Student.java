@@ -44,6 +44,21 @@ public class Student implements Serializable {
 	@Column(name = "BILL")
 	private Integer bill;
 	
+	@Column(name = "DEPT")
+	private String dept;
+	
+	public String getDept() {
+		return dept;
+	}
+
+	public void setDept(String dept) {
+		this.dept = dept;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
 	@Column(name = "LVL")
 	@Type(type = "com.nmvk.type.BooleanType")
 	private boolean level;

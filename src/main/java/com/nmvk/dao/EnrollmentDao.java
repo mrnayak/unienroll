@@ -45,5 +45,5 @@ public interface EnrollmentDao extends CrudRepository<Enrollments, Long>{
 	public Enrollments checkIfStudentRegistered(int student_id,int CID);
 	
 	@Query(value="select sum(credit) from enrollments e where e.student_id=?1 and e.sem=?2 and e.year=?3",nativeQuery = true)
-	public int getRegisteredCredit(int Strudent_id,String sem,String year);
+	public Integer getRegisteredCredit(int Strudent_id,String sem,String year);
 }

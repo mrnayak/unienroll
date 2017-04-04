@@ -379,7 +379,7 @@ public class StudentService {
 		if(preconditionGPA==null){
 			return 0;
 		}
-		else if(preconditionGPA.getGpa()<4){
+		else if(preconditionGPA.getGpa()<(studentDao.getOverallAvgGPA(student.getStudentID())==null?0.0:studentDao.getOverallAvgGPA(student.getStudentID()))){
 			return 0;
 			}
 		else{
@@ -699,7 +699,8 @@ private void viewPendingCourses(){
 				credit=creditInt;
 			}
 			
-			int totalCreditRegistered=enrollmentDao.getRegisteredCredit(student.getStudentID(), currentSem.getKey().getSem(), String.valueOf(currentSem.getKey().getYear()));
+			Integer totalCreditRegistered=enrollmentDao.getRegisteredCredit(student.getStudentID(), currentSem.getKey().getSem(), String.valueOf(currentSem.getKey().getYear()));
+			totalCreditRegistered=totalCreditRegistered==null?0:totalCreditRegistered;
 			int limitCredit= enrollmentDao.getMaxCreditLimit(student.isLevel()?1:0,student.getResidency());
 			if(totalCreditRegistered+credit>limitCredit){
 				System.out.println("*********** Credit limit exceeded. drop a course ***********\n");

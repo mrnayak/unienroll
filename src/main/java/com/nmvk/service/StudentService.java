@@ -803,6 +803,10 @@ private void viewPendingCourses(){
 	
 	private boolean dropCourse(int studentId, CourseListing courseToDrop, Semester currentSem){
 		try{
+			if(!currentSem.getStatus()) {
+				System.out.println("*** Drop deadline has passed****");
+				return false;
+			}
 			Integer courseId = courseToDrop.getKey().getCid();
 			Integer scheduleId = courseToDrop.getKey().getSched_id();
 			Integer classRoomId = courseToDrop.getKey().getClassroom_id(); 

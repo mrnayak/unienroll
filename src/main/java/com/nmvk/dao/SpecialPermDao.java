@@ -13,7 +13,7 @@ import com.nmvk.domain.SpecialReq;
 @Transactional
 public interface SpecialPermDao extends CrudRepository<SpecialReq, Long>{
 	
-	@Query(value = "SELECT * FROM SPECIAL_REQ", nativeQuery = true)
+	@Query(value = "SELECT * FROM SPECIAL_REQ WHERE IS_APPROVED = 0", nativeQuery = true)
 	public List<SpecialReq> getAllPendingSpecialReqs();
 	
 	@Modifying

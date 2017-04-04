@@ -5,7 +5,8 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
+
+import org.hibernate.annotations.Type;
 
 
 @Entity
@@ -15,6 +16,13 @@ public class SpecialReq implements Serializable{
 	
 	@EmbeddedId
 	EnrollmentKey key;
+	
+	@Column(name = "ADMIN_ID")
+	Integer employeeId;
+	
+	@Column(name = "IS_APPROVED")
+	@Type(type = "com.nmvk.type.BooleanType")
+	boolean is_approved;
 	
 	public EnrollmentKey getKey() {
 		return key;
@@ -43,6 +51,27 @@ public class SpecialReq implements Serializable{
 
 	public void setOrderNumber(Integer orderNumber) {
 		this.orderNumber = orderNumber;
+	}
+	
+	
+
+	public Integer getEmployeeId() {
+		return employeeId;
+	}
+
+
+	public void setEmployeeId(Integer employeeId) {
+		this.employeeId = employeeId;
+	}
+
+
+	public boolean isIs_approved() {
+		return is_approved;
+	}
+
+
+	public void setIs_approved(boolean is_approved) {
+		this.is_approved = is_approved;
 	}
 
 

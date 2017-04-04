@@ -231,17 +231,18 @@ public class AdminService {
 					+ " Order of enollment: " + specialPerms.get(i).getOrderNumber() + " Schedule ID: "
 					+ specialPerms.get(i).getKey().getScheduleId() + " Student ID: "
 					+ specialPerms.get(i).getKey().getStudentId());
+			
+			System.out.println("Approve this request? Yes/No");
+			String status = scanner.next();
+			
+			if(status.equals("yes")) {
+				SpecialReq sp = specialPerms.get(i);
+				sp.setIs_approved(true);
+				sp.setEmployeeId(administrator.getEmployee_id());
+				specialPermDao.save(sp);
+			}
 		}
-		System.out.println("Enter the choice number to remove a Student, -1: to just exit");
-		Integer choice = Integer.parseInt(scanner.next());
-		SpecialReq rowToDelete = specialPerms.get(choice);
-		if (choice == 0) {
-			specialPermDao.deleteSpecialPerm(rowToDelete.getKey().getStudentId(), rowToDelete.getKey().getScheduleId(),
-					rowToDelete.getKey().getClassroomId());
-			System.out.print("Student removed from list successfully");
-		} else {
-			return;
-		}
+		
 
 	}
 

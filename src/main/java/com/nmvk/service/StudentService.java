@@ -332,6 +332,7 @@ public class StudentService {
 					
 					
 					if (status==0){
+						
 						if(enrollForCourse(student.getStudentID(), courseToRegister, currentSem)){
 							System.out.println("***********Enrollment successful***********");
 						}
@@ -698,7 +699,12 @@ private void viewPendingCourses(){
 				credit=creditInt;
 			}
 			
-			
+			int totalCreditRegistered=enrollmentDao.getRegisteredCredit(student.getStudentID(), currentSem.getKey().getSem(), String.valueOf(currentSem.getKey().getYear()));
+			int limitCredit= enrollmentDao.getMaxCreditLimit(student.isLevel()?1:0,student.getResidency());
+			if(totalCreditRegistered+credit>limitCredit){
+				System.out.println("*********** Credit limit exceeded. drop a course ***********\n");
+				return false;
+			}
 			
 			Integer scheduleId = courseToRegister.getKey().getSched_id();
 			Integer classRoomId = courseToRegister.getKey().getClassroom_id(); 

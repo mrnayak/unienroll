@@ -16,6 +16,10 @@ public interface EnrollmentDao extends CrudRepository<Enrollments, Long>{
 	@Query(value = "INSERT INTO ENROLLMENTS(STUDENT_ID, GPA, SCHED_ID, CLASSROOM_ID, CID, ORDER_NUM, SEM, YEAR,CREDIT) VALUES(?1,null,?2,?3,?4,?5,?6,?7,?8)", nativeQuery = true)
 	public void addToEnrollment(int student_id,int schedule_id,int classroom_id,int CID,int order_num,String sem,String year,int credit);
 	
+	@Query(value = "select max from mincredit where st_level=?1 and residency=?2", nativeQuery = true)
+	public int getMaxCreditLimit(int level,int residency);
+	
+	
 	@Query(value = "SELECT * FROM ENROLLMENTS WHERE STUDENT_ID = ?1 AND SCHED_ID = ?2 AND CLASSROOM_ID = ?3 AND CID = ?4 AND SEM = ?5 AND YEAR = ?6 ", nativeQuery = true)
 	public Enrollments getByIds(Integer studentId, Integer scheduleId, Integer classroomId, Integer courseId, String sem, String year);
 	
@@ -39,4 +43,7 @@ public interface EnrollmentDao extends CrudRepository<Enrollments, Long>{
 	
 	@Query(value = "select  * from ENROLLMENTS e where e.gpa is not null and e.STUDENT_ID=?1 and e.CID = ?2", nativeQuery = true)
 	public Enrollments checkIfStudentRegistered(int student_id,int CID);
+	
+	@Query(value="select sum(credit) from enrollments e where e.student_id=?1 and e.sem=?2 and e.year=?3",nativeQuery = true)
+	public int getRegisteredCredit(int Strudent_id,String sem,String year);
 }

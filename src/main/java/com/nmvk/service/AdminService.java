@@ -312,9 +312,12 @@ public class AdminService {
 
 		System.out.println("8. Enter email");
 		String email = scanner.next();
+		
+		System.out.println("8. Enter department");
+		String dept = scanner.next();
 
 		studentDao.insert(Integer.parseInt(studentId), firstName, lastName, dob, Integer.parseInt(level),
-				Integer.parseInt(resident), Integer.parseInt(amount), email);
+				Integer.parseInt(resident), Integer.parseInt(amount), email, dept);
 	}
 
 	void viewDetails() {

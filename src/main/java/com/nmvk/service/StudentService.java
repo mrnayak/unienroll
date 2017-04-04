@@ -6,6 +6,7 @@ import java.util.Scanner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.nmvk.dao.AppUserDao;
 import com.nmvk.dao.CourseDao;
 import com.nmvk.dao.CourseListingDao;
 import com.nmvk.dao.EnrollmentDao;
@@ -17,6 +18,7 @@ import com.nmvk.dao.SemWiseGPADao;
 import com.nmvk.dao.SemesterDao;
 import com.nmvk.dao.SpecialPermDao;
 import com.nmvk.dao.StudentDao;
+import com.nmvk.domain.AppUser;
 import com.nmvk.domain.Course;
 import com.nmvk.domain.CourseListing;
 import com.nmvk.domain.Enrollments;
@@ -33,9 +35,6 @@ public class StudentService {
 	
 	@Autowired
 	Scanner scanner;
-	
-	@Autowired
-	LoginService login;
 	
 	@Autowired
 	EnrollmentDao enrollmentDao;
@@ -74,6 +73,9 @@ public class StudentService {
 	
 	@Autowired
 	PreconditionDao preconditionDao;
+	
+	@Autowired
+	AppUserDao appUserDao;
 	
 	/**
 	 * 1. View/Edit Profile
@@ -142,7 +144,7 @@ public class StudentService {
 		displayProfile();
 		
 		if(canEdit){
-			System.out.println("Please enter choice of number 1/2/3/4 to edit that particular item : ");
+			System.out.println("Please enter choice of number 1/2/3/4 to edit that particular item or to update password press \'p\': ");
 			String value = scanner.next();
 
 			while (!value.equals("0")) {
@@ -181,10 +183,27 @@ public class StudentService {
 				case "4":
 					System.out.println("Existing Phone Number  : "+ student.getPhone());
 					System.out.println("Enter New Phone Number : ");
-					String phone = scanner.next();				
+					String phone = scanner.next();			
 					student.setPhone(phone);
 					updateStudent(student);
 					break;
+				case "p":
+				case "P":
+					System.out.println("Enter old password : ");
+					String oldPassword = scanner.next();
+					System.out.println("Enter new password : ");
+					String newPassword = scanner.next();
+					
+					if(validateAndUpdatePassword(oldPassword, newPassword)){
+						System.out.println("*********Password successfully updated*********");
+					}
+					else{
+						System.out.println("###### ERROR: Failed to update password, check if old password entered is correct or if you mistakenly entered blank for new password ######");
+						System.out.println("\t######Returning######");
+					}
+					System.out.println("\tPress any key to continue");
+					String val = scanner.next();
+					return;
 				default:
 					System.out.println("You entered value : "+ value + " which is");
 					System.out.println("Invalid option entered");
@@ -254,7 +273,7 @@ public class StudentService {
 		String semResponse = scanner.next();
 		Integer semResponseInt = 1;
 		semResponseInt = validateIntScanWithLimit(semResponse, counter);
-//		if(intSemResponse == 0){
+//		if(semResponseInt == 0){
 //			return;
 //		}
 		
@@ -914,6 +933,25 @@ private void viewPendingCourses(){
 			scanInt = 0;
 		}
 		return scanInt;
+	}
+	
+	private boolean validateAndUpdatePassword(String oldPassword, String newPassword) {		
+		AppUser appUser = appUserDao.getByUsernameAndPassWord(student.getEmail(), oldPassword);		
+		if(appUser == null) {
+			System.out.println("###### Wrong credentials entered ######");
+			return false;
+		}
+		boolean passwordUpdated = false;
+		try{
+			appUserDao.updatePassword(student.getEmail(), newPassword);
+			passwordUpdated = true;
+		}
+		catch(Exception e){
+			System.out.println("***********SOME DB ERROR: FAILED TO UPDATE PASSWORD***********");
+			System.out.println(e);
+			System.out.println("***********SOME DB ERROR: FAILED TO UPDATE PASSWORD***********");
+		}
+		return passwordUpdated;
 	}
 
 	

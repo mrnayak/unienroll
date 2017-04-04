@@ -2,6 +2,7 @@ package com.nmvk.dao;
 
 import javax.transaction.Transactional;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -19,4 +20,8 @@ public interface AppUserDao extends CrudRepository<AppUser, Long>{
 	
 	@Query(value = "SELECT * FROM AppUser WHERE USERNAME = ?1 AND PASSWORD = ?2", nativeQuery = true)
 	public AppUser getByUsernameAndPassWord(String userName, String password);
+	
+	@Modifying
+	@Query(value = "UPDATE APPUSER SET PASSWORD = ?2 WHERE USERNAME = ?1", nativeQuery = true)
+	public void updatePassword(String userName, String password);
 }

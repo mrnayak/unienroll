@@ -561,8 +561,8 @@ public class AdminService {
 				credit = creditInt;
 			}
 
-			int totalCreditRegistered = enrollmentDao.getRegisteredCredit(student.getStudentID(), sem,
-					String.valueOf(year));
+			Integer totalCreditRegistered = enrollmentDao.getRegisteredCredit(student.getStudentID(), sem,String.valueOf(year));
+			totalCreditRegistered=totalCreditRegistered==null?0:totalCreditRegistered;
 			int limitCredit = enrollmentDao.getMaxCreditLimit(student.isLevel() ? 1 : 0, student.getResidency());
 			if (totalCreditRegistered + credit > limitCredit) {
 				System.out.println("*********** Credit limit exceeded. drop a course ***********\n");

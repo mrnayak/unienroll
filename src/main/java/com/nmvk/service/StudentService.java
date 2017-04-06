@@ -282,7 +282,7 @@ public class StudentService {
 		System.out.println(":"+currentSem.getKey().getSem()+" "+currentSem.getKey().getYear());
 		
 		System.out.println("Available courses: ");
-		List<CourseListing> courseList=courseListingDao.getOfferingsBySem(currentSem.getKey().getSem(),currentSem.getKey().getYear());
+		List<CourseListing> courseList=courseListingDao.getOfferingsBySem(currentSem.getKey().getSem(),currentSem.getKey().getYear(), student.getStudentID());
 		
 		counter = 1;
 		for (CourseListing courseEnt : courseList) {
@@ -569,7 +569,7 @@ public class StudentService {
 private void viewPendingCourses(){
 	
 	//Student_id
-	int student_id=1;
+	int student_id=student.getStudentID();
 	System.out.println("Open Semesters, choose: ");
 	List<Semester> openSem = semesterDao.getActiveSem();
 	
@@ -621,7 +621,7 @@ private void viewPendingCourses(){
 		System.out.println("1. Letter Grades  : ");
 		System.out.println("2. GPA : ");
 		System.out.println("Your Student id is");
-		Integer sid = 3;
+		Integer sid = student.getStudentID();
 		Float GPA = studentDao.getOverallAvgGPA(sid);
 		System.out.println("Your overall GPA is: "+GPA);
 		System.out.println("Here is a break down of your GPA's");

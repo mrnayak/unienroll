@@ -425,7 +425,7 @@ public class AdminService {
 		System.out.println(currentSem.getKey().getSem()+" "+currentSem.getKey().getYear());
 		
 		System.out.println("All offered courses: ");
-		List<CourseListing> courseList=courseListingDao.getOfferingsBySem(currentSem.getKey().getSem(),currentSem.getKey().getYear());
+		List<CourseListing> courseList=courseListingDao.getOfferingsBySemforAdmin(currentSem.getKey().getSem(),currentSem.getKey().getYear());
 		
 		counter = 1;
 		for (CourseListing courseEnt : courseList) {

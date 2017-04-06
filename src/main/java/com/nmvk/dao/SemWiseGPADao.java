@@ -14,11 +14,11 @@ import com.nmvk.domain.SemWiseGPA;
 public interface SemWiseGPADao extends CrudRepository<SemWiseGPA, Long>{
 
 	//Get Overall GPA
-	@Query(value = "select AVG(GPA) from ENROLLMENTS where student_id = ?1", nativeQuery = true)
+	@Query(value = "select round(sum(GPA*CREDIT)/sum(CREDIT),2) as GPA from enrollments where student_id = ?1 group by student_id", nativeQuery = true)
 	public Float getOverallAvgGPA(Integer student_id);
 	
 	
-	@Query(value = "SELECT AVG(GPA) AS GPA, YEAR FROM ENROLLMENTS WHERE STUDENT_ID = ?1 GROUP BY YEAR", nativeQuery = true)
+	@Query(value = "select round(sum(GPA*CREDIT)/sum(CREDIT),2) as GPA, year from enrollments where student_id = ?1 group by student_id, year", nativeQuery = true)
 	public List<SemWiseGPA> getSemWiseGPA(Integer student_id);
 
 	

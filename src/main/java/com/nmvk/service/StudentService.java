@@ -310,7 +310,10 @@ public class StudentService {
 		String addCourseValue = scanner.next();
 		Integer addCourseValueInt = 1;
 		addCourseValueInt = validateIntScanWithLimit(addCourseValue, counter);
-		
+		if (courseListingDao.getRegisteredCourseBySem(currentSem.getKey().getSem(), currentSem.getKey().getYear(), student.getStudentID()).size()==0 && student.getBill() >0){
+			System.out.println("Pay bills before registering");
+		}
+		else{
 		// if value is 0 skip below if condition
 		if(addCourseValueInt != 0){
 			
@@ -371,6 +374,7 @@ public class StudentService {
 			System.out.println("Already Enrolled");
 			}
 		}	
+		}
 	}
 	
 	private int checkPreReqCourses(CourseListing courseListing){

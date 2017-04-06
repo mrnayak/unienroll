@@ -619,13 +619,11 @@ private void viewPendingCourses(){
 		//TODO: Get grades of the student and display below
 		System.out.println("Press 0 to Go Back");
 		try{
-		System.out.println("1. Letter Grades  : ");
-		System.out.println("2. GPA : ");
-		System.out.println("Your Student id is");
 		Integer sid = student.getStudentID();
 		Float GPA = studentDao.getOverallAvgGPA(sid);
+		System.out.println("----------------------------------------------------------------------------------------------------");
 		System.out.println("Your overall GPA is: "+getLetterGrade(GPA));
-		
+		System.out.println("----------------------------------------------------------------------------------------------------");
 		System.out.println("Here is a break down of your GPA's");
 		List<SemWiseGPA> GPAs = semWiseGPADao.getSemWiseGPA(sid);
 		for(int i = 0; i<GPAs.size();i++){
@@ -636,10 +634,13 @@ private void viewPendingCourses(){
 		
 		List<Object[]> cGPAs = semWiseGPADao.getAllCourseGPAs(sid);
 		if(cGPAs.size()>0){
+		System.out.println("----------------------------------------------------------------------------------------------------");
 		System.out.println("GPA's course wise:-");
 		for(int i = 0;i<cGPAs.size();i++){
 			System.out.println("GPA: "+getLetterGrade(Float.parseFloat(cGPAs.get(i)[0].toString()))+" Subject: "+cGPAs.get(i)[1]);
 		}
+		System.out.println("----------------------------------------------------------------------------------------------------");
+
 		}
 		}
 		catch(Exception e){

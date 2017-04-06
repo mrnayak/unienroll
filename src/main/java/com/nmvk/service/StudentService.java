@@ -515,7 +515,7 @@ public class StudentService {
 		
 		Integer semResponseInt = 1;
 		semResponseInt = validateIntScanWithLimit(semResponse, counter);
-		Semester currentSem = openSem.get(semResponseInt -1);				
+		Semester currentSem = openSem.get(semResponseInt -1);	
 		System.out.println("Waitlisted courses: ");		
 		
 		List<CourseListing> wlCourses = courseListingDao.getWLourseBySem(currentSem.getKey().getSem(), currentSem.getKey().getYear(), student.getStudentID());
@@ -805,7 +805,7 @@ private void viewPendingCourses(){
 				}
 				
 				
-				
+				try{
 				enrollmentDao.addToEnrollment(studentId, 
 						courseToRegister.getKey().getSched_id(), 
 						courseToRegister.getKey().getClassroom_id(), 
@@ -814,6 +814,9 @@ private void viewPendingCourses(){
 						currentSem.getKey().getSem(),
 						String.valueOf(currentSem.getKey().getYear()),
 						credit);
+				} catch (Exception exception) {
+					System.out.println("Please check your schedule and re try");
+				}
 //				if(updateBillForCourseEnroll(studentId)){
 //					System.out.println("$$$$$$$$$ Student successfully billed $$$$$$$$$\n");
 //				}

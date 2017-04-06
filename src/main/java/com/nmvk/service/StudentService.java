@@ -1,5 +1,7 @@
 package com.nmvk.service;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Scanner;
 
@@ -308,7 +310,10 @@ public class StudentService {
 		String addCourseValue = scanner.next();
 		Integer addCourseValueInt = 1;
 		addCourseValueInt = validateIntScanWithLimit(addCourseValue, counter);
-		
+		if (courseListingDao.getRegisteredCourseBySem(currentSem.getKey().getSem(), currentSem.getKey().getYear(), student.getStudentID()).size()==0 && student.getBill() >0){
+			System.out.println("Pay bills before registering");
+		}
+		else{
 		// if value is 0 skip below if condition
 		if(addCourseValueInt != 0){
 			
@@ -369,6 +374,7 @@ public class StudentService {
 			System.out.println("Already Enrolled");
 			}
 		}	
+		}
 	}
 	
 	private int checkPreReqCourses(CourseListing courseListing){
@@ -618,9 +624,10 @@ private void viewPendingCourses(){
 	private void viewGrades(){
 		//TODO: Get grades of the student and display below
 		System.out.println("Press 0 to Go Back");
-		try{
+
 		Integer sid = student.getStudentID();
 		Float GPA = studentDao.getOverallAvgGPA(sid);
+		try{
 		System.out.println("----------------------------------------------------------------------------------------------------");
 		System.out.println("Your overall GPA is: "+getLetterGrade(GPA));
 		System.out.println("----------------------------------------------------------------------------------------------------");
@@ -640,44 +647,54 @@ private void viewPendingCourses(){
 			System.out.println("GPA: "+getLetterGrade(Float.parseFloat(cGPAs.get(i)[0].toString()))+" Subject: "+cGPAs.get(i)[1]);
 		}
 		System.out.println("----------------------------------------------------------------------------------------------------");
-
 		}
 		}
 		catch(Exception e){
-			System.out.println("Nothing to show..");
+			System.out.println("No GPAs found");
 		}
 		
+
+		
+		
+
+		
 	}
+	public static float round(float d, int decimalPlace) {
+        BigDecimal bd = new BigDecimal(Float.toString(d));
+        bd = bd.setScale(decimalPlace, BigDecimal.ROUND_HALF_UP);
+        return bd.floatValue();
+    }
 	
 	private String getLetterGrade(Float gpa){
-		
-		String result = gpa.toString();
-		if(gpa>=4.3){
+
+		gpa = (float) Math.round(gpa*100)/100;
+        String result = gpa.toString();
+		if(gpa>=4.33){
 			result+=", A+";
 		}
 		else if(gpa>=4){
 			result+=", A";
 		}
-		else if(gpa>=3.6){
+		else if(gpa>=3.66){
 			result+=", A-";
 		}
-		else if(gpa>=3.3){
+		else if(gpa>=3.33){
 			
 			result+=", B+";
 		}
 		else if(gpa>=3){
 			result+=", B";
 		}
-		else if(gpa>=2.7){
+		else if(gpa>=2.66){
 			result+=", B-";
 		}
-		else if(gpa>=2.3){
+		else if(gpa>=2.33){
 			result+=", C+";
 		}
 		else if(gpa>=2){
 			result+=", C";
 		}
-		else if(gpa>=1.6){
+		else if(gpa>=1.66){
 			result+=", C-";
 		}
 		return result;
